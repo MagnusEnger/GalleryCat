@@ -45,7 +45,12 @@ function activateImage( image_id ) {
         })
         .appendTo('#gallery #image-container');
         
-    new_img.css({ left: (image_container.innerWidth() - new_img.outerWidth()) / 2 })
+    // If the image is going to be resized, we need to recalculate its width
+    
+    var resize_prc = GC_max_height / image[3];
+    var width = resize_prc < 1 ? ( image[2] * resize_prc ) : image[2];
+        
+    new_img.css({ left: (image_container.innerWidth() - width) / 2 })
         .animate({opacity: 1.0}, GC_fade_speed, 'linear');
 
      GC_current_image = image_id;
@@ -100,6 +105,9 @@ function changePage( add ) {
         $('#gallery #navigation #last-page a').show();
     }
 
+    // Set all the images in the thumbnails.  This would be way nicer by creating a new page
+    // and sliding it in...
+
     var image_id = GC_current_page*GC_thumbnails;
     for ( var x=0; x<GC_thumbnails; x++ ) {
         var link = $('#gallery #navigation #nav-' + x + ' a');
@@ -107,7 +115,6 @@ function changePage( add ) {
         
         if ( image_id >= GC_images.length ) {
             link.attr('imgid', -1).hide();
-            // img.hide();
         }
         else {
             img.attr('src', GC_images[image_id][1])

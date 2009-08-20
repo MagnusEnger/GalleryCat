@@ -1,7 +1,7 @@
 [%- USE Math -%]
 [%- SET gallery_height = gallery.gallery_height %]
 <div id="gallery">
- <div id="top" style="height: [% gallery_height %];">    
+ <div id="top" style="height: [% gallery_height %]px;">    
   <div id="previous-image" style="height: [% gallery_height %]px;"><a href="#" style="display: none;"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uri_for_static('images/icons/previous.png') %]" alt="previous image" /></a></div>
   <div id="next-image" style="height: [% gallery_height %];"><a href="#"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uri_for_static('images/icons/next.png') %]" alt="next image" /></a></div>
   <div id="image" style="height: [% gallery_height %];"><div id="image-container"><img [% IF images.first.3 > gallery_height %]height="[% gallery_height %]"[% END %] src="[% images.first.0 %]" /></div></div>
@@ -24,4 +24,5 @@
  var GC_fade_speed = 500;
  var GC_thumbnails = [% gallery.thumbnails_per_page %];
  var GC_images = [% images_json %];
+ var GC_max_height = parseInt([% gallery_height %]);
 </script>
