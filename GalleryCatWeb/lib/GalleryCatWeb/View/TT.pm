@@ -1,4 +1,4 @@
-package GalleryCat::View::TT;
+package GalleryCatWeb::View::TT;
 
 use strict;
 use warnings;
@@ -6,7 +6,7 @@ use parent 'Catalyst::View::TT';
 
 =head1 NAME
 
-GalleryCat::View::TT - Catalyst View
+GalleryCatWeb::View::TT - Catalyst View
 
 =head1 DESCRIPTION
 

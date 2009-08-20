@@ -6,16 +6,15 @@ use strict;
 use warnings;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
-use lib "$FindBin::Bin/../../lib";
-use GalleryCat;
+use GalleryCatWeb;
 
-GalleryCat->run;
+GalleryCatWeb->run;
 
 1;
 
 =head1 NAME
 
-gallerycat_cgi.pl - Catalyst CGI
+gallerycatweb_cgi.pl - Catalyst CGI
 
 =head1 SYNOPSIS
 

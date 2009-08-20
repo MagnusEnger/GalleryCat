@@ -1,10 +1,8 @@
-package GalleryCat::Controller::Root;
+package GalleryCatWeb::Controller::Root;
 
 use strict;
 use warnings;
 use parent 'Catalyst::Controller';
-
-use JSON::XS qw();
 
 #
 # Sets the actions in this controller to be registered with no prefix
@@ -14,7 +12,7 @@ __PACKAGE__->config->{namespace} = '';
 
 =head1 NAME
 
-GalleryCat::Controller::Root - Root Controller for GalleryCat
+GalleryCatWeb::Controller::Root - Root Controller for GalleryCatWeb
 
 =head1 DESCRIPTION
 
@@ -34,6 +32,12 @@ sub index :Path :Args(0) {
     $c->stash->{galleries} = $c->model('GalleryCat')->gallery_list;
 
     $c->stash->{template} = 'list.tt';
+}
+
+sub default :Path {
+    my ( $self, $c ) = @_;
+    $c->response->body( 'Page not found' );
+    $c->response->status(404);
 }
 
 sub gallery :Path('gallery') :Args(1) {
@@ -60,11 +64,6 @@ sub gallery :Path('gallery') :Args(1) {
     $c->stash->{template} = 'gallery.tt';
 }
 
-sub default :Path {
-    my ( $self, $c ) = @_;
-    $c->response->body( 'Page not found' );
-    $c->response->status(404);
-}
 
 =head2 end
 

@@ -8,8 +8,7 @@ use Getopt::Long;
 use Pod::Usage;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
-use lib "$FindBin::Bin/../../lib";
-use GalleryCat;
+use GalleryCatWeb;
 
 my $help = 0;
 my ( $listen, $nproc, $pidfile, $manager, $detach, $keep_stderr );
@@ -26,7 +25,7 @@ GetOptions(
 
 pod2usage(1) if $help;
 
-GalleryCat->run(
+GalleryCatWeb->run(
     $listen,
     {   nproc   => $nproc,
         pidfile => $pidfile,
@@ -40,11 +39,11 @@ GalleryCat->run(
 
 =head1 NAME
 
-gallerycat_fastcgi.pl - Catalyst FastCGI
+gallerycatweb_fastcgi.pl - Catalyst FastCGI
 
 =head1 SYNOPSIS
 
-gallerycat_fastcgi.pl [options]
+gallerycatweb_fastcgi.pl [options]
 
  Options:
    -? -help      display this help and exits

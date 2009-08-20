@@ -1,4 +1,4 @@
-package GalleryCat;
+package GalleryCatWeb;
 
 use strict;
 use warnings;
@@ -21,14 +21,14 @@ our $VERSION = '0.01';
 
 # Configure the application.
 #
-# Note that settings in gallerycat.conf (or other external
+# Note that settings in gallerycatweb.conf (or other external
 # configuration file that you set up manually) take precedence
 # over this when using ConfigLoader. Thus configuration
 # details given here can function as a default configuration,
 # with an external configuration file acting as an override for
 # local deployment.
 
-__PACKAGE__->config( name => 'GalleryCat' );
+__PACKAGE__->config( name => 'GalleryCatWeb' );
 
 # Start the application
 __PACKAGE__->setup();
@@ -36,11 +36,11 @@ __PACKAGE__->setup();
 
 =head1 NAME
 
-GalleryCat - Catalyst based application
+GalleryCatWeb - Catalyst based application
 
 =head1 SYNOPSIS
 
-    script/gallerycat_server.pl
+    script/gallerycatweb_server.pl
 
 =head1 DESCRIPTION
 
@@ -48,7 +48,7 @@ GalleryCat - Catalyst based application
 
 =head1 SEE ALSO
 
-L<GalleryCat::Controller::Root>, L<Catalyst>
+L<GalleryCatWeb::Controller::Root>, L<Catalyst>
 
 =head1 AUTHOR
 
@@ -60,11 +60,5 @@ This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
-
-sub uri_for_static {
-    my ( $c, $path, $params ) = @_;
-    $path =~ s{^/}{};
-    return defined($params) ? $c->uri_for( '/static/' . $path, $params ) : $c->uri_for( '/static/' . $path );
-}
 
 1;

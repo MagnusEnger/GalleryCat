@@ -6,8 +6,7 @@ use Getopt::Long;
 use Pod::Usage;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
-use lib "$FindBin::Bin/../../lib";
-use Catalyst::Test 'GalleryCat';
+use Catalyst::Test 'GalleryCatWeb';
 
 my $help = 0;
 
@@ -21,18 +20,18 @@ print request($ARGV[0])->content . "\n";
 
 =head1 NAME
 
-gallerycat_test.pl - Catalyst Test
+gallerycatweb_test.pl - Catalyst Test
 
 =head1 SYNOPSIS
 
-gallerycat_test.pl [options] uri
+gallerycatweb_test.pl [options] uri
 
  Options:
    -help    display this help and exits
 
  Examples:
-   gallerycat_test.pl http://localhost/some_action
-   gallerycat_test.pl /some_action
+   gallerycatweb_test.pl http://localhost/some_action
+   gallerycatweb_test.pl /some_action
 
  See also:
    perldoc Catalyst::Manual

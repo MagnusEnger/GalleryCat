@@ -1,4 +1,4 @@
-package GalleryCat::Model::GalleryCat;
+package GalleryCatWeb::Model::GalleryCat;
 
 use strict;
 use warnings;
@@ -11,7 +11,7 @@ use Config::General;
 
 =head1 NAME
 
-GalleryCat::Model::GalleryCat - Catalyst Model
+GalleryCatWeb::Model::GalleryCat - Catalyst Model
 
 =head1 DESCRIPTION
 
@@ -70,8 +70,8 @@ sub init {
 
     while ( my ($id, $conf) = each %{$galleries->{gallery}} ) {
         my %final_conf = ( %merge_config, %$conf, id => $id );
-        use Data::Dumper;
-        warn(Dumper(\%final_conf));
+        # use Data::Dumper;
+        # warn(Dumper(\%final_conf));
         my $gallery = GalleryCat::Gallery->new( \%final_conf );
         push @{$self->{gallery_list}}, $gallery;
         $self->{gallery_map}->{$id} = $gallery;

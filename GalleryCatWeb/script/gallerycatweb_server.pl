@@ -12,15 +12,14 @@ use Getopt::Long;
 use Pod::Usage;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
-use lib "$FindBin::Bin/../../lib";
 
 my $debug             = 0;
 my $fork              = 0;
 my $help              = 0;
 my $host              = undef;
-my $port              = $ENV{GALLERYCAT_PORT} || $ENV{CATALYST_PORT} || 3000;
+my $port              = $ENV{GALLERYCATWEB_PORT} || $ENV{CATALYST_PORT} || 3000;
 my $keepalive         = 0;
-my $restart           = $ENV{GALLERYCAT_RELOAD} || $ENV{CATALYST_RELOAD} || 0;
+my $restart           = $ENV{GALLERYCATWEB_RELOAD} || $ENV{CATALYST_RELOAD} || 0;
 my $background        = 0;
 my $pidfile           = undef;
 
@@ -64,9 +63,9 @@ $| = 1 if $ENV{HARNESS_ACTIVE};
 my $runner = sub {
     # This is require instead of use so that the above environment
     # variables can be set at runtime.
-    require GalleryCat;
+    require GalleryCatWeb;
 
-    GalleryCat->run(
+    GalleryCatWeb->run(
         $port, $host,
         {
             argv       => \@argv,
@@ -112,11 +111,11 @@ else {
 
 =head1 NAME
 
-gallerycat_server.pl - Catalyst Testserver
+gallerycatweb_server.pl - Catalyst Testserver
 
 =head1 SYNOPSIS
 
-gallerycat_server.pl [options]
+gallerycatweb_server.pl [options]
 
  Options:
    -d -debug          force debug mode

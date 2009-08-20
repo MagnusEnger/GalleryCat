@@ -32,17 +32,17 @@ pod2usage(1) if ( $help || !$ARGV[0] );
 
 my $helper = Catalyst::Helper->new( { '.newfiles' => !$force, mech => $mech } );
 
-pod2usage(1) unless $helper->mk_component( 'GalleryCat', @ARGV );
+pod2usage(1) unless $helper->mk_component( 'GalleryCatWeb', @ARGV );
 
 1;
 
 =head1 NAME
 
-gallerycat_create.pl - Create a new Catalyst Component
+gallerycatweb_create.pl - Create a new Catalyst Component
 
 =head1 SYNOPSIS
 
-gallerycat_create.pl [options] model|view|controller name [helper] [options]
+gallerycatweb_create.pl [options] model|view|controller name [helper] [options]
 
  Options:
    -force        don't create a .new file where a file to be created exists
@@ -50,15 +50,15 @@ gallerycat_create.pl [options] model|view|controller name [helper] [options]
    -help         display this help and exits
 
  Examples:
-   gallerycat_create.pl controller My::Controller
-   gallerycat_create.pl -mechanize controller My::Controller
-   gallerycat_create.pl view My::View
-   gallerycat_create.pl view MyView TT
-   gallerycat_create.pl view TT TT
-   gallerycat_create.pl model My::Model
-   gallerycat_create.pl model SomeDB DBIC::Schema MyApp::Schema create=dynamic\
+   gallerycatweb_create.pl controller My::Controller
+   gallerycatweb_create.pl -mechanize controller My::Controller
+   gallerycatweb_create.pl view My::View
+   gallerycatweb_create.pl view MyView TT
+   gallerycatweb_create.pl view TT TT
+   gallerycatweb_create.pl model My::Model
+   gallerycatweb_create.pl model SomeDB DBIC::Schema MyApp::Schema create=dynamic\
    dbi:SQLite:/tmp/my.db
-   gallerycat_create.pl model AnotherDB DBIC::Schema MyApp::Schema create=static\
+   gallerycatweb_create.pl model AnotherDB DBIC::Schema MyApp::Schema create=static\
    dbi:Pg:dbname=foo root 4321
 
  See also:
