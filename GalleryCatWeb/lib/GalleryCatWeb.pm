@@ -34,6 +34,13 @@ __PACKAGE__->config( name => 'GalleryCatWeb' );
 __PACKAGE__->setup();
 
 
+sub uri_for_static {
+    my ( $c, $path, $params ) = @_;
+    $path =~ s{^/}{};
+    return defined($params) ? $c->uri_for( '/static/' . $path, $params ) : $c->uri_for( '/static/' . $path );
+}
+
+
 =head1 NAME
 
 GalleryCatWeb - Catalyst based application
