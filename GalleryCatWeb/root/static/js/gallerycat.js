@@ -63,6 +63,12 @@ function activateImage( image_id ) {
     else {
         $('#gallery #next-image a').show();
     }
+    
+    // Preload some images
+    
+    if ( image_id > 0 ) { preload( image_id-1 ); }
+    if ( image_id < (GC_images.length-1) ) { preload( image_id+1 ); }
+
 
     return false;
 }
@@ -112,6 +118,20 @@ function changePage( add ) {
     return false;
 }
 
+function preload(image_id) {
+    var image = GC_images[image_id];
+    if ( image['preloaded'] ) {
+        return;
+    }
+
+    jQuery('<img />')
+        .hide()
+        .attr('src', image[0])
+        .appendTo(document.body)
+        .load(function () { jQuery(this).remove(); GC_images[image_id]['preloaded'] = true; })
+        .error(function () { jQuery(this).remove(); });
+}
+
 $(document).ready( function() {
     $('#gallery #navigation .navigation-block a').bind('click', imageClick);
     $('#gallery #previous-image a').bind('click', prevImage);
@@ -121,4 +141,6 @@ $(document).ready( function() {
     $('#gallery #next-page a').bind('click', function() { changePage(1) });
     $('#gallery #last-page a').bind('click', function() { changePage(GC_max_page) });
 });
+
+
 
