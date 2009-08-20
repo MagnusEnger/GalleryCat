@@ -28,7 +28,7 @@ GalleryCatWeb::Controller::Root - Root Controller for GalleryCatWeb
 
 =cut
 
-sub index :Path :Args(0) {
+sub index : Path : Args(0) {
     my ( $self, $c ) = @_;
 
     $c->stash->{galleries} = $c->model('GalleryCat')->gallery_list;
@@ -36,36 +36,36 @@ sub index :Path :Args(0) {
     $c->stash->{template} = 'list.tt';
 }
 
-sub default :Path {
+sub default : Path {
     my ( $self, $c ) = @_;
-    $c->response->body( 'Page not found' );
+    $c->response->body('Page not found');
     $c->response->status(404);
 }
 
-sub gallery :Path('gallery') :Args(1) {
+sub gallery : Path('gallery') : Args(1) {
     my ( $self, $c, $gallery_id ) = @_;
-    
-    $c->stash->{gallery_cat} = $c->model('GalleryCat');
+
+    $c->stash->{gallery_cat} = $c->model('GalleryCat');  # Cache this later, obviously.
     my $gallery = $c->stash->{gallery} = $c->stash->{gallery_cat}->gallery($gallery_id);
-    
+
     # Make sure thumbnails are available
     $c->stash->{gallery}->build_thumbnails;
-    
-    my $images = $c->stash->{gallery}->images;
-    
-    my @images = map { 
-        [ 
-            '' . $c->uri_for_static($_->uri_path),
-            '' . $c->uri_for_static($_->thumbnail_uri_path),
-            $_->width,
-            $_->height,
-        ] } @{$images};
-    
-    $c->stash->{images} = \@images;
-    $c->stash->{images_json} = JSON::XS->new->utf8->encode(\@images);
-    $c->stash->{template} = 'gallery.tt';
-}
 
+    my $images = $c->stash->{gallery}->images;
+
+    my @images = map {
+        {
+            url       => '' . $c->uri_for_static( $_->uri_path ),
+            thumbnail => '' . $c->uri_for_static( $_->thumbnail_uri_path ),
+            width     => $_->width,
+            height    => $_->height,
+        }
+    } @{$images};
+
+    $c->stash->{images}      = \@images;
+    $c->stash->{images_json} = JSON::XS->new->utf8->encode( \@images );
+    $c->stash->{template}    = 'gallery.tt';
+}
 
 =head2 end
 
@@ -73,7 +73,8 @@ Attempt to render a view, if needed.
 
 =cut
 
-sub end : ActionClass('RenderView') {}
+sub end : ActionClass('RenderView') {
+}
 
 =head1 AUTHOR
 

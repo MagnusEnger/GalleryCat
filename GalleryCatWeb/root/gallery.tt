@@ -4,14 +4,14 @@
  <div id="top" style="height: [% gallery_height %]px;">    
   <div id="previous-image" style="height: [% gallery_height %]px;"><a href="#" style="display: none;"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uri_for_static('images/icons/previous.png') %]" alt="previous image" /></a></div>
   <div id="next-image" style="height: [% gallery_height %];"><a href="#"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uri_for_static('images/icons/next.png') %]" alt="next image" /></a></div>
-  <div id="image" style="height: [% gallery_height %];"><div id="image-container"><img [% IF images.first.3 > gallery_height %]height="[% gallery_height %]"[% END %] src="[% images.first.0 %]" /></div></div>
+  <div id="image" style="height: [% gallery_height %];"><div id="image-container"><img [% IF images.first.height > gallery_height %]height="[% gallery_height %]"[% END %] src="[% images.first.url %]" /></div></div>
  </div>
  <div id="navigation"><div id="navigation-container">
   <div id="first-page" class="button"><a href="#" style="display: none;"><img class="button" src="[% c.uri_for_static('images/icons/first.png') %]" alt="first page" /></a></div>
   <div id="previous-page"class="button"><a href="#" style="display: none;"><img class="button" src="[% c.uri_for_static('images/icons/previous.png') %]" alt="previous page" /></a></div>
   [% SET max_nav = gallery.thumbnails_per_page - 1;
      FOREACH x IN [ 0 .. max_nav ] %]
-   <div class="navigation-block" id="nav-[% x %]" style="width: [% gallery.thumbnail_max_width %];"><a imgid="[% x %]" href="[% images.$x.0 %]"><img src="[% images.$x.1 %]" /></a></div>
+   <div class="navigation-block" id="nav-[% x %]" style="width: [% gallery.thumbnail_max_width %];"><a imgid="[% x %]" href="[% images.$x.url %]"><img src="[% images.$x.thumbnail %]" /></a></div>
   [% END %]
   <div id="next-page" class="button"><a href="#"><img class="button" src="[% c.uri_for_static('images/icons/next.png') %]" alt="next page" /></a></div>
   <div id="last-page" class="button"><a href="#"><img class="button" src="[% c.uri_for_static('images/icons/last.png') %]" alt="last page" /></a></div>

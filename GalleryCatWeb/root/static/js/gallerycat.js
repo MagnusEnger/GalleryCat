@@ -31,28 +31,27 @@ function activateImage( image_id ) {
     var image_container = $('#gallery #image-container');
   
     var image = GC_images[image_id];
-    var left = ( image_container.innerWidth() - image[2] ) / 2 ;
-    var height = image[3] > image_div.innerHeight() ? image_div.innerHeight() : image[3];
+    var height = image[3] > image_div.innerHeight() ? image_div.innerHeight() : image.height;
+
+    // If the image is going to be resized, we need to recalculate its width
+    var resize_prc = GC_max_height / image.height;
+    var width = resize_prc < 1 ? ( image.width * resize_prc ) : image.width;
 
     // append new picture
     new_img = jQuery('<img />')
-        .attr('src', image[0])
+        .attr('src', image.url)
         .css({
             position: 'absolute',
             top: 0,
             height: height,
-            opacity: 0.0
+            opacity: 0.0,
+            left: (image_container.innerWidth() - width) / 2
         })
-        .appendTo('#gallery #image-container');
-        
-    // If the image is going to be resized, we need to recalculate its width
-    
-    var resize_prc = GC_max_height / image[3];
-    var width = resize_prc < 1 ? ( image[2] * resize_prc ) : image[2];
-        
-    new_img.css({ left: (image_container.innerWidth() - width) / 2 })
+        .appendTo('#gallery #image-container')
         .animate({opacity: 1.0}, GC_fade_speed, 'linear');
-
+        
+    
+        
      GC_current_image = image_id;
 
     // Show and hide relevant controls
@@ -117,7 +116,7 @@ function changePage( add ) {
             link.attr('imgid', -1).hide();
         }
         else {
-            img.attr('src', GC_images[image_id][1])
+            img.attr('src', GC_images[image_id].thumbnail)
             link.attr('imgid', image_id).show();
         }
         image_id++;
@@ -128,15 +127,15 @@ function changePage( add ) {
 
 function preload(image_id) {
     var image = GC_images[image_id];
-    if ( !image.defined || image['preloaded'] ) {
+    if ( typeof(image) == 'undefined' || image.preloaded ) {
         return;
     }
 
     jQuery('<img />')
         .hide()
-        .attr('src', image[0])
+        .attr('src', image.url)
         .appendTo(document.body)
-        .load(function () { jQuery(this).remove(); GC_images[image_id]['preloaded'] = true; })
+        .load(function () { image.preloaded = true; jQuery(this).remove(); })
         .error(function () { jQuery(this).remove(); });
 }
 
@@ -148,6 +147,7 @@ $(document).ready( function() {
     $('#gallery #previous-page a').bind('click', function() { changePage(-1) });
     $('#gallery #next-page a').bind('click', function() { changePage(1) });
     $('#gallery #last-page a').bind('click', function() { changePage(GC_max_page) });
+    preload( GC_current_image + 1 );
 });
 
 
