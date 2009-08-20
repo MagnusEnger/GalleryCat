@@ -1,0 +1,77 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: black;
+}
+
+#gallery {
+    background: black;
+}
+
+#gallery img.button, #gallery .navigation-block img {
+    border: none; 
+}
+
+
+#gallery #image img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#gallery #image-container {
+    position: relative;
+}
+
+#gallery #image {
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+#gallery #image {
+    overflow: hidden;
+}
+
+#gallery #top #previous-image {
+    padding-left: 20px;
+    float: left;
+    width: 45px;
+    margin: 0;
+}
+
+#gallery #top #next-image {
+    padding-right: 20px;
+    float: right;
+    width: 48px;
+    margin: 0;
+    
+}
+
+#gallery #navigation {
+    margin: 10px;
+    border-top: 1px solid black;
+    padding-top: 10px;
+    clear: both;
+}
+
+
+#gallery #navigation-container {
+    float: left;
+}
+
+#gallery #navigation div.button {
+    float: left;
+    margin: 10px;
+    width: 48px;
+}
+
+#gallery .navigation-block {
+    float: left;
+    margin: 10px;
+}
+
+#gallery .navigation-block img {
+    display: block;
+    margin: auto auto;
+}
+

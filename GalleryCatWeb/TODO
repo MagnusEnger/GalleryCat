@@ -1,0 +1,20 @@
+Handle large images by generating gallery sized copies similar to
+thumbnails, with optional links to the full size.
+
+Make as much of the interface fall back to non-JS actions
+
+Add support for switching themes
+
+Less ugly default look
+
+EXIF data for titles, descriptions, etc.
+
+Support for image config files
+
+More flexible handling of the gallery path/uri
+
+Re-organize things a bit to take the Moose stuff out of the Catalyst dir?
+
+Should the Resizer stuff be done through Moose roles and "handles"?
+
+Should there be a Storage layer so it could in theory support a database or displaying from a CDN?

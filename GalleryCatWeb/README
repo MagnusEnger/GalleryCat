@@ -1,0 +1,9 @@
+Configuration:
+
+Set your galleries' base_path in galleries.conf to an absolute path. This can
+probably be made to work with relative URLs to skip this part for default
+configs, but for now it only works when it's absolute.
+
+
+By default galleries are in root/static/galleries - symlink your real gallery
+directory there if you want Catalyst to serve them.
