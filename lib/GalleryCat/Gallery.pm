@@ -13,6 +13,12 @@ has 'id' => (
     required => 1,
 );
 
+has 'name' => (
+    is       => 'rw',
+    isa      => 'Str',
+    required => 0,
+);
+
 has 'base_path' => (
     is  => 'ro',
     isa => 'Str',
@@ -47,8 +53,8 @@ has 'thumbnails_per_page' => (
 );
 
 has 'gallery_height' => (
-    is  => 'ro',
-    isa => 'Str',
+    is      => 'ro',
+    isa     => 'Str',
     default => 500,
 );
 
@@ -65,14 +71,14 @@ has 'thumbnail_max_height' => (
 );
 
 has 'image_resize_module' => (
-    is      => 'ro',
-    isa     => 'Str',
+    is       => 'ro',
+    isa      => 'Str',
     required => 1,
-    default => 'Resize',
+    default  => 'Resize',
 );
 
 has 'resizer' => (
-    is => 'rw',
+    is  => 'rw',
     isa => 'Object',
 );
 
@@ -87,10 +93,12 @@ sub BUILD {
     eval "require $resizer_module;";
     $self->resizer( $resizer_module->new() );
 
+    if ( !defined($self->name) ) {
+        $self->name($self->id);
+    }
+
     return $self;
 }
-
-
 
 sub images {
     my ($self) = @_;
@@ -137,16 +145,17 @@ sub build_thumbnails {
 
     # Create any thumbnails that don't exist
     my $build_count = 0;
-    my $max_x = $self->thumbnail_max_width;
-    my $max_y = $self->thumbnail_max_height;
+    my $max_x       = $self->thumbnail_max_width;
+    my $max_y       = $self->thumbnail_max_height;
     chdir( $self->path );
     foreach my $image (@$images) {
         my $file = $image->file;
-        warn( "Checking image: $file\n" );
+        warn("Checking image: $file\n");
         if ( !exists $thumbnails{$file} ) {
-            warn( "Creating thumbnail for: $file\n" );
-            # warn( "Mogrify: gm mogrify -output-directory thumbnails -quality 95 -resize ${max_x}x${max_y} $file\n" );
-            # `gm mogrify -output-directory thumbnails -quality 95 -resize ${max_x}x${max_y} $file`;
+            warn("Creating thumbnail for: $file\n");
+
+# warn( "Mogrify: gm mogrify -output-directory thumbnails -quality 95 -resize ${max_x}x${max_y} $file\n" );
+# `gm mogrify -output-directory thumbnails -quality 95 -resize ${max_x}x${max_y} $file`;
             $image->create_thumbnail();
             $build_count++;
         }
@@ -178,7 +187,7 @@ sub uri_path {
     my @path_parts;
 
     push @path_parts, $self->uri_base
-      if defined($self->uri_base);
+      if defined( $self->uri_base );
 
     push @path_parts,
       $self->gallery_uri_path || $self->gallery_path || $self->id;
@@ -187,7 +196,6 @@ sub uri_path {
 
     return join '/', @path_parts;
 }
-
 
 no Moose;
 
