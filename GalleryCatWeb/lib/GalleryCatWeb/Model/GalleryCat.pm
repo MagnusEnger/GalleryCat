@@ -29,24 +29,25 @@ it under the same terms as Perl itself.
 =cut
 
 sub new {
-    my $self = shift->next::method(@_);
+    my ( $class, $c, $config ) = @_;
+    my $self = $class->next::method($c, $config);
 
-    use Data::Dumper;
-    warn(Dumper($self));
-
-    $self->init();
+    $self->init($c);
     return $self;
 }
 
 
 
 sub init {
-    my $self = shift;
+    my ( $self, $c ) = @_;
     
     croak "->config->{gallery_conf} must be defined for this model"
         unless $self->{gallery_conf};
-        
-    my %config = Config::General->new($self->{gallery_conf})->getall;
+    
+    my $conf_path = $c->path_to($self->{gallery_conf});
+    warn($conf_path);
+    
+    my %config = Config::General->new($conf_path->stringify)->getall;
     $self->{'.GalleryCat'}->{config} = \%config;
 
     ##
