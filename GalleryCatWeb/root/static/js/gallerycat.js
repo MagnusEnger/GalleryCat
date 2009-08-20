@@ -19,6 +19,8 @@ function nextImage(e) {
 
 function activateImage( image_id ) {
 
+    image_id = parseInt(image_id);  // Fixes odd issue where image_id is sometimes treated as a string
+    
     // delete previous picture
     $('#gallery #image img').animate({opacity: 0.0}, GC_fade_speed, 'linear', function() {
         jQuery(this).remove();
@@ -68,7 +70,6 @@ function activateImage( image_id ) {
     
     if ( image_id > 0 ) { preload( image_id-1 ); }
     if ( image_id < (GC_images.length-1) ) { preload( image_id+1 ); }
-
 
     return false;
 }
@@ -120,7 +121,7 @@ function changePage( add ) {
 
 function preload(image_id) {
     var image = GC_images[image_id];
-    if ( image['preloaded'] ) {
+    if ( !image.defined || image['preloaded'] ) {
         return;
     }
 
