@@ -156,8 +156,9 @@ sub build_thumbnails {
 
 # warn( "Mogrify: gm mogrify -output-directory thumbnails -quality 95 -resize ${max_x}x${max_y} $file\n" );
 # `gm mogrify -output-directory thumbnails -quality 95 -resize ${max_x}x${max_y} $file`;
-            $image->create_thumbnail();
-            $build_count++;
+            if ( $image->create_thumbnail() ) {
+                $build_count++;
+            }
         }
     }
 

@@ -15,9 +15,16 @@ sub resize {
     
     my $rs = Image::Resize->new($source);
     my $gd = $rs->resize( $width, $height );
-    open(FH, ">$dest");
-    print FH $gd->jpeg();
-    close(FH);
+    if ( open(FH, ">$dest") ) {
+        print FH $gd->jpeg();
+        close(FH);
+    }
+    else {
+        warn('Unable to open file to write thumbnail to: ' . $dest);
+        return 0;
+    }
+    
+    return 1;
 }
 
 1;
