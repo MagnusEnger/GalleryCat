@@ -2,8 +2,8 @@
 [%- SET gallery_height = gallery.gallery_height %]
 <div id="gallery">
  <div id="info">
-  <div id="gallery-name">[% gallery.name %]</div>
-  <div id="image-title">[% images.first.title %]</div>
+  <div id="gallery-name">[% gallery.name | html %]</div>
+  <div id="image-title">[% images.first.title | html %]</div>
   <div style="clear: both;"></div>
  </div>
  <div id="main" style="height: [% gallery_height %]px;">    
@@ -28,12 +28,8 @@
 <script type="text/javascript" src="[% c.uri_for_static('js/gallerycat.js') %]"></script>
 <script>
 
-// var GC_current_image = 0;
-// var GC_current_page = 0;
 GalCat.max_page = [% Math.int((images.size - 1) / gallery.thumbnails_per_page) %];
-// var GC_fade_speed = 500;
 GalCat.thumbnails_per_page = [% gallery.thumbnails_per_page %];
-// GalCat.thumbnails = [% gallery.thumbnails_per_page %];
 GalCat.images = [% images_json %];
 GalCat.max_height = parseInt([% gallery_height %]);
 
