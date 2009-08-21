@@ -13,6 +13,7 @@ body {
     border-top: 1px solid #999;
     border-bottom: 1px solid #999;
     padding: 5px;
+    margin: 5px;
 }
 
 #gallery #info h1 {
