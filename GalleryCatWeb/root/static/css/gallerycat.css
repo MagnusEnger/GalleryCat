@@ -10,18 +10,28 @@ body {
 }
 
 #gallery #info {
-    border-top: 1px solid #999;
-    border-bottom: 1px solid #999;
+    border-bottom: 1px solid #333;
     padding: 5px;
-    margin: 5px;
+    margin-bottom: 5px;
 }
 
-#gallery #info h1 {
-    font-size: 100%;
+#gallery #gallery-name {
+    width: 45%;
+    float: left;
+    padding-left: 20px;
+    text-align: left;
+}
+
+#gallery #image-title {
+    width: 45%;
+    float: right;
+    padding-right: 20px;
+    text-align: right;
+}
+
+#gallery #info {
     font-family: Verdana, Arial, sans-serif;
-    font-weight: normal;
     margin: 3px 0;
-    text-align: center;
 }
 
 #gallery img.button, #gallery .navigation-block img {
@@ -48,14 +58,14 @@ body {
     overflow: hidden;
 }
 
-#gallery #top #previous-image {
+#gallery #main #previous-image {
     padding-left: 20px;
     float: left;
     width: 45px;
     margin: 0;
 }
 
-#gallery #top #next-image {
+#gallery #main #next-image {
     padding-right: 20px;
     float: right;
     width: 48px;
@@ -64,9 +74,9 @@ body {
 }
 
 #gallery #navigation {
-    margin: 10px;
-    border-top: 1px solid black;
-    padding-top: 10px;
+    margin: 5px;
+    border-top: 1px solid #333;
+    padding-top: 5px;
     clear: both;
 }
 

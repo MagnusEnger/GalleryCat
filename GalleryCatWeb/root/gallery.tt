@@ -1,13 +1,15 @@
 [%- USE Math -%]
 [%- SET gallery_height = gallery.gallery_height %]
 <div id="gallery">
- <div id="top" style="height: [% gallery_height %]px;">    
-  <div id="previous-image" style="height: [% gallery_height %]px;"><a href="#" style="display: none;"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uri_for_static('images/icons/previous.png') %]" alt="previous image" /></a></div>
-  <div id="next-image" style="height: [% gallery_height %];"><a href="#"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uri_for_static('images/icons/next.png') %]" alt="next image" /></a></div>
-  <div id="image" style="height: [% gallery_height %];"><div id="image-container"><img [% IF images.first.height > gallery_height %]height="[% gallery_height %]"[% END %] src="[% images.first.url %]" /></div></div>
- </div>
  <div id="info">
-  <h1>[% images.first.title | html %]</h1>
+  <div id="gallery-name">[% gallery.name %]</div>
+  <div id="image-title">[% images.first.title %]</div>
+  <div style="clear: both;"></div>
+ </div>
+ <div id="main" style="height: [% gallery_height %]px;">    
+  <div id="previous-image" style="height: [% gallery_height %]px;"><a href="#" style="display: none;"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uri_for_static('images/icons/previous.png') %]" alt="previous image" /></a></div>
+  <div id="next-image" style="height: [% gallery_height %]px;"><a href="#"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uri_for_static('images/icons/next.png') %]" alt="next image" /></a></div>
+  <div id="image" style="height: [% gallery_height %]px;"><div id="image-container"><img [% IF images.first.height > gallery_height %]height="[% gallery_height %]"[% END %] src="[% images.first.url %]" /></div></div>
  </div>
  <div id="navigation"><div id="navigation-container">
   <div id="first-page" class="button"><a href="#" style="display: none;"><img class="button" src="[% c.uri_for_static('images/icons/first.png') %]" alt="first page" /></a></div>
@@ -43,6 +45,8 @@ $(document).ready( function() {
     $('#gallery #previous-page a').bind('click', GalCat.prevPageClick);
     $('#gallery #next-page a').bind('click', GalCat.nextPageClick);
     $('#gallery #last-page a').bind('click', GalCat.lastPageClick);
+    $(document).bind( 'keypress', GalCat.keyPressed);  
+
     GalCat.preload( GalCat.current_image + 1 );
 });
 

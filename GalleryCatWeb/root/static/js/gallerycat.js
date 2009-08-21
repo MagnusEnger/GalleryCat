@@ -18,6 +18,16 @@ var GalCat = function() {
 
             image_id = parseInt(image_id);  // Fixes odd issue where image_id is sometimes treated as a string
 
+            if ( image_id < 0 ) {
+                image_id = 0;
+            }
+            if ( image_id > public.images.length-1 ) {
+                image_id = public.images.length-1;
+            }
+            if ( image_id == private.current_image ) {
+                return false;
+            }
+
             // delete previous picture
             $('#gallery #image img').animate({opacity: 0.0}, private.fade_speed, 'linear', function() {
                 jQuery(this).remove();
@@ -48,7 +58,7 @@ var GalCat = function() {
                 .animate({opacity: 1.0}, private.fade_speed, 'linear');
 
             // change info section
-            $('#gallery #info h1').html(image.title);  // TODO: Title needs HTML escaping?
+            $('#gallery #info #image-title').html(image.title);  // TODO: Title needs HTML escaping?
 
 
              private.current_image = image_id;
@@ -179,6 +189,15 @@ var GalCat = function() {
         lastPageClick: function(e) {
             public.changePage(public.max_page);
             return false;
+        },
+        
+        keyPressed: function(e) {
+              if (e.keyCode === 37) {
+                  public.activateImage( private.current_image - 1 );
+              }
+              else if (e.keyCode === 39) {
+                  public.activateImage( private.current_image + 1 );
+              }
         }
 
         
