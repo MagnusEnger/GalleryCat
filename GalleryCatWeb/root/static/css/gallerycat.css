@@ -80,6 +80,19 @@ body {
     clear: both;
 }
 
+#gallery #navigation .navigation-block {
+    float: left;
+    margin: 8px;
+}
+
+#gallery #navigation .navigation-block a img {
+    border: 2px solid black;
+}
+
+#gallery #navigation .navigation-block a.active img {
+    border: 2px solid #999;
+}
+
 
 #gallery #navigation-container {
     float: left;
@@ -91,10 +104,6 @@ body {
     width: 48px;
 }
 
-#gallery .navigation-block {
-    float: left;
-    margin: 10px;
-}
 
 #gallery .navigation-block img {
     display: block;

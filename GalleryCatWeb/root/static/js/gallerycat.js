@@ -18,6 +18,7 @@ var GalCat = function() {
 
             image_id = parseInt(image_id);  // Fixes odd issue where image_id is sometimes treated as a string
 
+            // Bounds checking, and avoid changing to the current page
             if ( image_id < 0 ) {
                 image_id = 0;
             }
@@ -28,7 +29,7 @@ var GalCat = function() {
                 return false;
             }
 
-            // delete previous picture
+            // Start deleting the previous picture while we get the next ready
             $('#gallery #image img').animate({opacity: 0.0}, private.fade_speed, 'linear', function() {
                 jQuery(this).remove();
             });
@@ -44,7 +45,7 @@ var GalCat = function() {
             var resize_prc = private.max_height / image.height;
             var width = resize_prc < 1 ? ( image.width * resize_prc ) : image.width;
 
-            // append new picture
+            // Append new picture and fade it in
             new_img = jQuery('<img />')
                 .attr('src', image.url)
                 .css({
@@ -79,6 +80,9 @@ var GalCat = function() {
                 $('#gallery #next-image a').show();
             }
 
+            // Highlight the current image in the navigation
+            this.highlightNavigation();
+
             // Preload some images
             // 
             if ( image_id > 0 ) { this.preload( image_id-1 ); }
@@ -87,6 +91,13 @@ var GalCat = function() {
             return this;
         },
 
+        highlightNavigation: function() {
+            // Remove any current highlighting
+            $('#gallery #navigation .navigation-block a').removeClass('active');
+            
+            // Find the current image in the navigation page
+            $('#gallery #navigation .navigation-block a[imgid=' + private.current_image + ']').addClass('active');
+        },
 
         // Create a hidden image DOM object that self-destructs on load or error
         preload: function(image_id) {

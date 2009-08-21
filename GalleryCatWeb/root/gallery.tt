@@ -16,7 +16,7 @@
   <div id="previous-page"class="button"><a href="#" style="display: none;"><img class="button" src="[% c.uri_for_static('images/icons/previous.png') %]" alt="previous page" /></a></div>
   [% SET max_nav = gallery.thumbnails_per_page - 1;
      FOREACH x IN [ 0 .. max_nav ] %]
-   <div class="navigation-block" id="nav-[% x %]" style="width: [% gallery.thumbnail_max_width %];"><a imgid="[% x %]" href="[% images.$x.url %]"><img src="[% images.$x.thumbnail %]" /></a></div>
+   <div class="navigation-block" id="nav-[% x %]" style="width: [% gallery.thumbnail_max_width %];"><a imgid="[% x %]" href="[% images.$x.url %]" class="[% loop.first ? 'active' : '' %]"><img src="[% images.$x.thumbnail %]" /></a></div>
   [% END %]
   <div id="next-page" class="button"><a href="#"><img class="button" src="[% c.uri_for_static('images/icons/next.png') %]" alt="next page" /></a></div>
   <div id="last-page" class="button"><a href="#"><img class="button" src="[% c.uri_for_static('images/icons/last.png') %]" alt="last page" /></a></div>
