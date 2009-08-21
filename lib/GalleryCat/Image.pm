@@ -96,6 +96,12 @@ sub create_thumbnail {
     );
 }
 
+sub title {
+    my $self = shift;
+    
+    return $self->file;
+}
+
 no Moose;
 
 1;

@@ -47,6 +47,9 @@ var GalCat = function() {
                 .appendTo('#gallery #image-container')
                 .animate({opacity: 1.0}, private.fade_speed, 'linear');
 
+            // change info section
+            $('#gallery #info h1').html(image.title);  // TODO: Title needs HTML escaping?
+
 
              private.current_image = image_id;
 

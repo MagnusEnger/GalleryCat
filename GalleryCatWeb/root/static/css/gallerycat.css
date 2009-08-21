@@ -6,6 +6,21 @@ body {
 
 #gallery {
     background: black;
+    color: white;
+}
+
+#gallery #info {
+    border-top: 1px solid #999;
+    border-bottom: 1px solid #999;
+    padding: 5px;
+}
+
+#gallery #info h1 {
+    font-size: 100%;
+    font-family: Verdana, Arial, sans-serif;
+    font-weight: normal;
+    margin: 3px 0;
+    text-align: center;
 }
 
 #gallery img.button, #gallery .navigation-block img {

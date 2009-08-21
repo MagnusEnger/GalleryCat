@@ -57,6 +57,7 @@ sub gallery : Path('gallery') : Args(1) {
         {
             url       => '' . $c->uri_for_static( $_->uri_path ),
             thumbnail => '' . $c->uri_for_static( $_->thumbnail_uri_path ),
+            title     => $_->title,
             width     => $_->width,
             height    => $_->height,
         }

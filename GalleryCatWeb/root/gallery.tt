@@ -6,6 +6,9 @@
   <div id="next-image" style="height: [% gallery_height %];"><a href="#"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uri_for_static('images/icons/next.png') %]" alt="next image" /></a></div>
   <div id="image" style="height: [% gallery_height %];"><div id="image-container"><img [% IF images.first.height > gallery_height %]height="[% gallery_height %]"[% END %] src="[% images.first.url %]" /></div></div>
  </div>
+ <div id="info">
+  <h1>[% images.first.title | html %]</h1>
+ </div>
  <div id="navigation"><div id="navigation-container">
   <div id="first-page" class="button"><a href="#" style="display: none;"><img class="button" src="[% c.uri_for_static('images/icons/first.png') %]" alt="first page" /></a></div>
   <div id="previous-page"class="button"><a href="#" style="display: none;"><img class="button" src="[% c.uri_for_static('images/icons/previous.png') %]" alt="previous page" /></a></div>
