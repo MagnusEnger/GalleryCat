@@ -71,20 +71,8 @@ var GalCat = function() {
 
 
             // Show and hide relevant controls
-            if ( image_id <= 0 ) {
-                $('#gallery #previous-image a').hide();
-            }
-            else {
-                $('#gallery #previous-image a').show();
-            }
-
-            if ( image_id >= (public.images.length-1) ) {
-                $('#gallery #next-image a').hide();
-            }
-            else {
-                $('#gallery #next-image a').show();
-            }
-
+            this.updateImageNavigationControls();
+            
             // Change the page if necessary
             this.pageToCurrent();
 
@@ -146,14 +134,15 @@ var GalCat = function() {
         // Change the navigation menu to a specific page
         activatePage: function( new_page ) {
 
+            // Clamp left/right
             if ( new_page < 0 ) { new_page = 0; }
             if ( new_page > public.max_page ) { new_page = public.max_page; }
             if ( private.current_page == new_page ) { return false; }
 
             var dir = new_page > private.current_page ? 'left' : 'right';
 
-            
-            var old_page_block = $('#navigation-blocks div.page.active');
+
+            var old_page_block = $('#gallery #navigation-blocks div.page.active');
 
             // Create a new page and fill in the thumbnails
 
@@ -216,7 +205,28 @@ var GalCat = function() {
             private.current_page = new_page;
 
             // Hide controls at left/right bounds
+            this.updatePageNavigationControls();
 
+            return this;
+        },
+        
+        updateImageNavigationControls: function() {
+            if ( image_id <= 0 ) {
+                $('#gallery #previous-image a').hide();
+            }
+            else {
+                $('#gallery #previous-image a').show();
+            }
+
+            if ( image_id >= (public.images.length-1) ) {
+                $('#gallery #next-image a').hide();
+            }
+            else {
+                $('#gallery #next-image a').show();
+            }
+        },
+        
+        updatePageNavigationControls: function() {
             if ( private.current_page == 0 ) {
                 $('#gallery #navigation #first-page a').hide();
                 $('#gallery #navigation #previous-page a').hide();
@@ -234,8 +244,6 @@ var GalCat = function() {
                 $('#gallery #navigation #next-page a').show();
                 $('#gallery #navigation #last-page a').show();
             }
-
-            return this;
         },
         
         prevImage: function() {
