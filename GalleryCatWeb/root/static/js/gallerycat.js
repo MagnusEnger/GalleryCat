@@ -33,9 +33,6 @@ var GalCat = function() {
                 return false;
             }
             
-            // What direction are we going?  In case we need to change pages
-            var direction = image_id < private.current_image ? 'l' : 'r';
-
             // Start deleting the previous picture while we get the next ready
             $('#gallery #image img').animate({opacity: 0.0}, private.fade_speed, 'linear', function() {
                 jQuery(this).remove();
