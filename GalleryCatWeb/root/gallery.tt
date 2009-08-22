@@ -50,7 +50,7 @@ $(document).ready( function() {
     $('#gallery #previous-page a').bind('click', GalCat.prevPageClick);
     $('#gallery #next-page a').bind('click', GalCat.nextPageClick);
     $('#gallery #last-page a').bind('click', GalCat.lastPageClick);
-    $(document).bind( 'keypress', GalCat.keyPressed);  
+    $(document).bind('keydown', GalCat.keyDown);  
 
     GalCat.preload( GalCat.current_image + 1 );
 });
