@@ -93,6 +93,22 @@ body {
     border: 2px solid #999;
 }
 
+#gallery #navigation-blocks {
+    float: left;
+    width: 600px;
+    height: 110px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#gallery #navigation-blocks .page {
+    width: 600px;
+    height: 110px;
+    float: left;
+    position: absolute;
+}
+
+
 
 #gallery #navigation-container {
     float: left;

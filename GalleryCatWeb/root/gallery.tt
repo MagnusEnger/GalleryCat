@@ -1,5 +1,12 @@
 [%- USE Math -%]
 [%- SET gallery_height = gallery.gallery_height %]
+
+<style>
+#gallery #navigation .navigation-block {
+    width: [% gallery.thumbnail_max_width || 100 %]px;
+    height: [% gallery.thumbnail_max_height || 100 %]px;
+</style>
+
 <div id="gallery">
  <div id="info">
   <div id="gallery-name">[% gallery.name | html %]</div>
@@ -14,10 +21,12 @@
  <div id="navigation"><div id="navigation-container">
   <div id="first-page" class="button"><a href="#" style="display: none;"><img class="button" src="[% c.uri_for_static('images/icons/first.png') %]" alt="first page" /></a></div>
   <div id="previous-page"class="button"><a href="#" style="display: none;"><img class="button" src="[% c.uri_for_static('images/icons/previous.png') %]" alt="previous page" /></a></div>
-  [% SET max_nav = gallery.thumbnails_per_page - 1;
-     FOREACH x IN [ 0 .. max_nav ] %]
-   <div class="navigation-block" id="nav-[% x %]" style="width: [% gallery.thumbnail_max_width %];"><a imgid="[% x %]" href="[% images.$x.url %]" class="[% loop.first ? 'active' : '' %]"><img src="[% images.$x.thumbnail %]" /></a></div>
+  <div id="navigation-blocks"><div class="page active">
+   [% SET max_nav = gallery.thumbnails_per_page - 1;
+      FOREACH x IN [ 0 .. max_nav ] %]
+   <div class="navigation-block"><a imgid="[% x %]" href="[% images.$x.url %]" class="[% loop.first ? 'active' : '' %]"><img src="[% images.$x.thumbnail %]" /></a></div>
   [% END %]
+  </div></div>
   <div id="next-page" class="button"><a href="#"><img class="button" src="[% c.uri_for_static('images/icons/next.png') %]" alt="next page" /></a></div>
   <div id="last-page" class="button"><a href="#"><img class="button" src="[% c.uri_for_static('images/icons/last.png') %]" alt="last page" /></a></div>
  </div><div style="clear: both;"></div></div>
