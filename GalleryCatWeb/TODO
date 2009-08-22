@@ -13,8 +13,6 @@ Support for image config files
 
 More flexible handling of the gallery path/uri
 
-Re-organize things a bit to take the Moose stuff out of the Catalyst dir?
-
 Should the Resizer stuff be done through Moose roles and "handles"?
 
 Should there be a Storage layer so it could in theory support a database or displaying from a CDN?
