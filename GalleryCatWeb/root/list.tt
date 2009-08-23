@@ -1,5 +1,31 @@
-<ul>
+<style>
+#gallery #list {
+    width: [% ( ( gallery.cover_width || 200 ) * 3 ) + 20 %]px;
+}
+
+#gallery .gallery-info {
+    width: [% ( ( gallery.cover_width || 200 ) * 2 ) %]px;
+}
+
+#gallery .cover img, #gallery .cover  {
+    width: [% ( gallery.cover_width || 200 ) %]px;
+}
+
+
+</style>
+
+<div id="gallery"><div id="list">
+
 [% FOREACH gallery IN galleries %]
- <li><a href="[% c.uri_for( c.controller.action_for('gallery'), gallery.id ) %]">[% gallery.name %]</a></li>
+ [%- SET url = c.uri_for( c.controller('Gallery').action_for('gallery'), gallery.id ) -%]
+ <div class="list-container">
+  <div class="cover"><a href="[% url %]"><img src="[% c.uri_for_static( gallery.cover.uri_path ) %]" /></a></div>
+  <div class="gallery-info">
+   <h2><a href="[% url %]">[% gallery.name %]</a></h2>
+   <div class="gallery-description">[% gallery.description %]</div>
+  </div>
+  <div style="clear: both"></div>
+ </div>
 [% END %]
-</ul>
+
+</div></div>

@@ -14,9 +14,13 @@ has 'id' => (
 );
 
 has 'name' => (
-    is       => 'rw',
-    isa      => 'Str',
-    required => 0,
+    is  => 'rw',
+    isa => 'Str',
+);
+
+has 'description' => (
+    is  => 'ro',
+    isa => 'Str',
 );
 
 has 'base_path' => (
@@ -82,6 +86,12 @@ has 'resizer' => (
     isa => 'Object',
 );
 
+has 'cover_index' => (
+    is      => 'ro',
+    isa     => 'Int',
+    default => 0,
+);
+
 sub BUILD {
     my $self = shift;
 
@@ -93,17 +103,22 @@ sub BUILD {
     eval "require $resizer_module;";
     $self->resizer( $resizer_module->new() );
 
-    if ( !defined($self->name) ) {
-        $self->name($self->id);
+    if ( !defined( $self->name ) ) {
+        $self->name( $self->id );
     }
 
     return $self;
 }
 
+sub cover {
+    my ($self) = @_;
+    return $self->images->[ $self->cover_index ];
+}
+
 sub images {
     my ($self) = @_;
 
-    # return $self->{cache}->{images} if exists $self->{cache}->{images};
+    return $self->{cache}->{images} if exists $self->{cache}->{images};
 
     my $path = $self->path;
 

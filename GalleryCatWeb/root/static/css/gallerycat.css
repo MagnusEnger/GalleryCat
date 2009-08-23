@@ -2,12 +2,56 @@ body {
     margin: 0;
     padding: 0;
     background: black;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 90%;
 }
 
 #gallery {
     background: black;
     color: white;
 }
+
+#gallery a {
+    color: white;
+    text-decoration: none;
+}
+
+#gallery a:hover {
+    text-decoration: underline;
+}
+
+
+/* List page */
+
+#gallery #list {
+    margin: 20px auto;
+}
+
+#gallery #list h2 {
+    font-size: 110%;
+    margin-top: 0;
+}
+
+#gallery #list a img {
+    border: none;
+}
+
+#gallery .list-container {
+    padding: 5px;
+    clear: both;
+    border-bottom: 1px solid #333;
+}
+
+#gallery .cover {
+    float: left;
+}
+
+#gallery .gallery-info {
+    float: right;
+}
+
+/* Gallery page */
+
 
 #gallery #info {
     border-bottom: 1px solid #333;
@@ -29,8 +73,8 @@ body {
     text-align: right;
 }
 
+
 #gallery #info {
-    font-family: Verdana, Arial, sans-serif;
     margin: 3px 0;
 }
 

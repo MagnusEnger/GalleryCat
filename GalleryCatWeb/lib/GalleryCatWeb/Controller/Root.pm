@@ -30,10 +30,7 @@ GalleryCatWeb::Controller::Root - Root Controller for GalleryCatWeb
 
 sub index : Path : Args(0) {
     my ( $self, $c ) = @_;
-
-    $c->stash->{galleries} = $c->model('GalleryCat')->gallery_list;
-
-    $c->stash->{template} = 'list.tt';
+    $c->forward( 'Gallery', 'index' );
 }
 
 sub default : Path {
@@ -42,31 +39,7 @@ sub default : Path {
     $c->response->status(404);
 }
 
-sub gallery : Path('gallery') : Args(1) {
-    my ( $self, $c, $gallery_id ) = @_;
 
-    $c->stash->{gallery_cat} = $c->model('GalleryCat');  # Cache this later, obviously.
-    my $gallery = $c->stash->{gallery} = $c->stash->{gallery_cat}->gallery($gallery_id);
-
-    # Make sure thumbnails are available
-    $c->stash->{gallery}->build_thumbnails;
-
-    my $images = $c->stash->{gallery}->images;
-
-    my @images = map {
-        {
-            url       => '' . $c->uri_for_static( $_->uri_path ),
-            thumbnail => '' . $c->uri_for_static( $_->thumbnail_uri_path ),
-            title     => $_->title,
-            width     => $_->width,
-            height    => $_->height,
-        }
-    } @{$images};
-
-    $c->stash->{images}      = \@images;
-    $c->stash->{images_json} = JSON::XS->new->utf8->encode( \@images );
-    $c->stash->{template}    = 'gallery.tt';
-}
 
 =head2 end
 
