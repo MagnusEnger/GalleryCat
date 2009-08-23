@@ -69,7 +69,6 @@ var GalCat = function() {
             // Set the current image if we've come this far
              private.current_image = image_id;
 
-
             // Show and hide relevant controls
             this.updateImageNavigationControls();
             
@@ -211,14 +210,14 @@ var GalCat = function() {
         },
         
         updateImageNavigationControls: function() {
-            if ( image_id <= 0 ) {
+            if ( private.current_image <= 0 ) {
                 $('#gallery #previous-image a').hide();
             }
             else {
                 $('#gallery #previous-image a').show();
             }
 
-            if ( image_id >= (public.images.length-1) ) {
+            if ( private.current_image >= (public.images.length-1) ) {
                 $('#gallery #next-image a').hide();
             }
             else {
