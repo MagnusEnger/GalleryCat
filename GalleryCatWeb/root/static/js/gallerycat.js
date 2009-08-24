@@ -1,7 +1,7 @@
 var GalCat = function() {
     var private = {
         current_image: 0,
-        current_page: 0,
+        current_page: 0
     };
     
     var public = {
