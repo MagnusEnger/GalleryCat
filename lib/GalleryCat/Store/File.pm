@@ -8,6 +8,14 @@ use Path::Class;
 
 use GalleryCat::Image;
 
+has 'thumbnail_dir' => (
+    is       => 'ro',
+    isa      => 'Str',
+    required => 1,
+    default  => 'thumbnails',
+);
+
+
 sub BUILD {
     my $self = shift;
 
@@ -37,6 +45,22 @@ sub images {
     return \@images;
 }
 
+sub find_thumbnails {
+    my ($self) = @_;
+
+    my $thumbnail_path = $self->thumbnail_path;
+
+    # Find existing thumbnails
+    my @thumbnails;
+    my $dir = $thumbnail_path->open();
+    while ( my $file = $dir->read ) {
+        next unless $file =~ / \. (jpe?g|png|gif) $/xsm;
+        push @thumbnails, $file;
+    }
+
+    return \@thumbnails;
+}
+
 sub build_thumbnails {
     my ($self) = @_;
 
@@ -49,13 +73,7 @@ sub build_thumbnails {
         mkdir($thumbnail_path);
     }
 
-    # Find existing thumbnails
-    my %thumbnails;
-    my $dir = $thumbnail_path->open();
-    while ( my $file = $dir->read ) {
-        next unless $file =~ / \. (jpe?g|png|gif) $/xsm;
-        $thumbnails{$file} = 1;
-    }
+    my %thumbnail_map = map { $_-> => 1 } @{ $self->list_thumbnails };
 
     # Create any thumbnails that don't exist
     my $build_count = 0;
@@ -65,7 +83,7 @@ sub build_thumbnails {
     foreach my $image (@$images) {
         my $file = $image->file;
         warn("Checking image: $file\n");
-        if ( !exists $thumbnails{$file} ) {
+        if ( !exists $thumbnail_map{$file} ) {
             warn("Creating thumbnail for: $file\n");
 
 # warn( "Mogrify: gm mogrify -output-directory thumbnails -quality 95 -resize ${max_x}x${max_y} $file\n" );
