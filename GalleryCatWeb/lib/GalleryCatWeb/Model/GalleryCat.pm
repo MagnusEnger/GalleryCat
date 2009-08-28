@@ -40,25 +40,31 @@ sub new {
 
 sub init {
     my ( $self, $c ) = @_;
-    
-    croak "->config->{gallery_conf} must be defined for this model"
-        unless $self->{gallery_conf};
-    
-    my $conf_path = $c->path_to($self->{gallery_conf});
-    warn($conf_path);
-    
-    my %config = Config::General->new($conf_path->stringify)->getall;
-    $self->{'.GalleryCat'}->{config} = \%config;
 
-    ##
-    ## TODO: Make this less dumb.. there's probably a better way to set up the config files
-    ##       for easy use within Catalyst and externally.
-    ##
+    my $config = $self->{gallery_config} || {};
+
+    use Data::Dumper;
+    warn(Dumper($config));
     
-    my %merge_config = %config;
+    # First get the path to the general gallery configuration, if it exists.
+    # It can be skipped and just defined in the Catalyst Model config, but
+    # then none of the external scripts would work without loading the web app.
+
+    my $conf_path = $c->path_to($self->{gallery_config_file});
+    if ( $conf_path && -e $conf_path ) {
+        $c->log->debug( "Loading gallery config: $conf_path" );
+        my %config_from_file = Config::General->new($conf_path->stringify)->getall;
+        $config = Catalyst::Utils::merge_hashes( \%config_from_file, $config )
+    }
+
+    # Go through each individual gallery and merge it's config with the global
+    # gallery config.
+    
+    my %merge_config = %$config;
     my $galleries = delete $merge_config{galleries};
 
     # Check that the base_path is rooted, otherwise it should be relative from $home?
+    # This may not be tested yet!
     
     if ( $merge_config{base_path} !~ m{^/} ) {
         $merge_config{base_path} = $self->{home} . '/' . $merge_config{base_path};
@@ -70,19 +76,14 @@ sub init {
     # Create gallery objects 
 
     while ( my ($id, $conf) = each %{$galleries->{gallery}} ) {
-        my %final_conf = ( %merge_config, %$conf, id => $id );
-        # use Data::Dumper;
-        # warn(Dumper(\%final_conf));
-        my $gallery = GalleryCat::Gallery->new( \%final_conf );
+        $conf->{id} = $id;
+        my $final_conf = Catalyst::Utils::merge_hashes( \%merge_config, $conf );
+        my $gallery = GalleryCat::Gallery->new( $final_conf );
         push @{$self->{gallery_list}}, $gallery;
         $self->{gallery_map}->{$id} = $gallery;
     }
     
     return $self;
-}
-
-sub cat_config {
-    return shift->{'.GalleryCat'}->{config};
 }
 
 sub gallery {
@@ -96,12 +97,6 @@ sub gallery_map {
     my $self = shift;
     
     return $self->{gallery_map};
-}
-
-sub galleries_conf {
-    my $self = shift;
-
-    return $self->config->{galleries}->{gallery};
 }
 
 sub gallery_list {
