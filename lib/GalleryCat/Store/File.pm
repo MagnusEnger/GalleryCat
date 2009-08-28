@@ -1,96 +1,12 @@
-package GalleryCat::Gallery;
+package GalleryCat::Store::File;
 
 use Moose;
 use Carp;
 
 use IO::Dir;
 use Path::Class;
+
 use GalleryCat::Image;
-
-has 'id' => (
-    is       => 'ro',
-    isa      => 'Str',
-    required => 1,
-);
-
-has 'name' => (
-    is  => 'rw',
-    isa => 'Str',
-);
-
-has 'description' => (
-    is  => 'ro',
-    isa => 'Str',
-);
-
-has 'base_path' => (
-    is  => 'ro',
-    isa => 'Str',
-);
-
-has 'uri_base' => (
-    is  => 'ro',
-    isa => 'Str',
-);
-
-has 'gallery_uri_path' => (
-    is  => 'ro',
-    isa => 'Str',
-);
-
-has 'gallery_path' => (
-    is  => 'ro',
-    isa => 'Str',
-);
-
-has 'thumbnail_dir' => (
-    is       => 'ro',
-    isa      => 'Str',
-    required => 1,
-    default  => 'thumbnails',
-);
-
-has 'thumbnails_per_page' => (
-    is      => 'ro',
-    isa     => 'Int',
-    default => 5,
-);
-
-has 'gallery_height' => (
-    is      => 'ro',
-    isa     => 'Str',
-    default => 500,
-);
-
-has 'thumbnail_max_width' => (
-    is      => 'ro',
-    isa     => 'Int',
-    default => 150,
-);
-
-has 'thumbnail_max_height' => (
-    is      => 'ro',
-    isa     => 'Int',
-    default => 150,
-);
-
-has 'image_resize_module' => (
-    is       => 'ro',
-    isa      => 'Str',
-    required => 1,
-    default  => 'Resize',
-);
-
-has 'resizer' => (
-    is  => 'rw',
-    isa => 'Object',
-);
-
-has 'cover_index' => (
-    is      => 'ro',
-    isa     => 'Int',
-    default => 0,
-);
 
 sub BUILD {
     my $self = shift;
@@ -99,30 +15,11 @@ sub BUILD {
         die( 'Path to gallery does not exist: ' . $self->path );
     }
 
-    my $resizer_module = 'GalleryCat::Resizer::' . $self->image_resize_module;
-    eval "require $resizer_module;";
-    $self->resizer( $resizer_module->new() );
-
-    if ( !defined( $self->name ) ) {
-        $self->name( $self->id );
-    }
-
     return $self;
-}
-
-
-# Returns an image for the cover of a gallery.  Not sure what it should do if the gallery has no images for some reason.
-# Perhaps return a default image?
-
-sub cover {
-    my ($self) = @_;
-    return $self->images->[ $self->cover_index ];
 }
 
 sub images {
     my ($self) = @_;
-
-    return $self->{cache}->{images} if exists $self->{cache}->{images};
 
     my $path = $self->path;
 
@@ -136,8 +33,6 @@ sub images {
         next unless $file =~ / \. (jpe?g|png|gif) $/xsm;
         push @images, GalleryCat::Image->new( file => $file, gallery => $self );
     }
-
-    $self->{cache}->{images} = \@images;
 
     return \@images;
 }

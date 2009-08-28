@@ -1,14 +1,10 @@
 package GalleryCat::Resizer::Resize;
 
-use strict;
+use Moose;
 
 # Resize GalleryCat images using Image::Resize
 
 use Image::Resize;
-
-sub new {
-    return bless {}, shift;
-}
 
 sub resize {
     my ( $self, $source, $dest, $width, $height ) = @_;
@@ -26,6 +22,8 @@ sub resize {
     
     return 1;
 }
+
+no Moose;
 
 1;
 
