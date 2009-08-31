@@ -6,6 +6,7 @@ use Carp;
 use IO::Dir;
 use Path::Class;
 use GalleryCat::Image;
+use Catalyst::Utils;
 
 has 'id' => (
     is       => 'ro',
@@ -23,10 +24,6 @@ has 'description' => (
     isa => 'Str',
 );
 
-has 'base_path' => (
-    is  => 'ro',
-    isa => 'Str',
-);
 
 has 'uri_base' => (
     is  => 'ro',
@@ -34,11 +31,6 @@ has 'uri_base' => (
 );
 
 has 'gallery_uri_path' => (
-    is  => 'ro',
-    isa => 'Str',
-);
-
-has 'gallery_path' => (
     is  => 'ro',
     isa => 'Str',
 );
@@ -74,17 +66,42 @@ has 'thumbnail_max_height' => (
     default => 150,
 );
 
-has 'image_resize_module' => (
+
+has 'store_module' => (
+    is       => 'ro',
+    isa      => 'Str',
+    required => 1,
+    default  => 'File',
+);
+
+has 'store_config' => (
+    is       => 'ro',
+    isa      => 'HashRef',
+);
+
+has 'store' => (
+    is => 'rw',
+    isa => 'Object',
+);
+
+
+has 'resizer_module' => (
     is       => 'ro',
     isa      => 'Str',
     required => 1,
     default  => 'Resize',
 );
 
+has 'resizer_config' => (
+    is       => 'ro',
+    isa      => 'HashRef',
+);
+
 has 'resizer' => (
     is  => 'rw',
     isa => 'Object',
 );
+
 
 has 'cover_index' => (
     is      => 'ro',
@@ -95,13 +112,19 @@ has 'cover_index' => (
 sub BUILD {
     my $self = shift;
 
-    if ( !-e $self->path ) {
-        die( 'Path to gallery does not exist: ' . $self->path );
-    }
+    # if ( !-e $self->path ) {
+    #     die( 'Path to gallery does not exist: ' . $self->path );
+    # }
 
-    my $resizer_module = 'GalleryCat::Resizer::' . $self->image_resize_module;
+    my $resizer_module = 'GalleryCat::Resizer::' . $self->resizer_module;
     eval "require $resizer_module;";
     $self->resizer( $resizer_module->new() );
+
+    my $store_module = 'GalleryCat::Store::' . $self->store_module;
+    eval "require $store_module;";
+    my $store_config = $self->store_config || {};
+    $store_config->{gallery} = $self;
+    $self->store( $store_module->new( $store_config ) );
 
     if ( !defined( $self->name ) ) {
         $self->name( $self->id );
@@ -124,80 +147,43 @@ sub images {
 
     return $self->{cache}->{images} if exists $self->{cache}->{images};
 
-    my $path = $self->path;
+    my $images = $self->store->images;
 
-    my $dir = $path->open();
-    if ( !defined($dir) ) {
-        croak( 'Unable to open directory for reading: ' . $path );
-    }
+    $self->{cache}->{images} = $images;
 
-    my @images;
-    while ( my $file = $dir->read ) {
-        next unless $file =~ / \. (jpe?g|png|gif) $/xsm;
-        push @images, GalleryCat::Image->new( file => $file, gallery => $self );
-    }
-
-    $self->{cache}->{images} = \@images;
-
-    return \@images;
+    return $images;
 }
 
 sub build_thumbnails {
     my ($self) = @_;
 
-    my $images         = $self->images;
-    my $path           = $self->path;
-    my $thumbnail_path = $self->thumbnail_path;
+    my %thumbnail_map = map { $_ => 1 } @{ $self->list_thumbnails };
 
-    # Create thumbnail path if it doesn't exist
-    if ( !-e $thumbnail_path ) {
-        mkdir($thumbnail_path);
-    }
 
-    # Find existing thumbnails
-    my %thumbnails;
-    my $dir = $thumbnail_path->open();
-    while ( my $file = $dir->read ) {
-        next unless $file =~ / \. (jpe?g|png|gif) $/xsm;
-        $thumbnails{$file} = 1;
-    }
-
-    # Create any thumbnails that don't exist
-    my $build_count = 0;
-    my $max_x       = $self->thumbnail_max_width;
-    my $max_y       = $self->thumbnail_max_height;
-    chdir( $self->path );
-    foreach my $image (@$images) {
-        my $file = $image->file;
-        warn("Checking image: $file\n");
-        if ( !exists $thumbnails{$file} ) {
-            warn("Creating thumbnail for: $file\n");
-
-# warn( "Mogrify: gm mogrify -output-directory thumbnails -quality 95 -resize ${max_x}x${max_y} $file\n" );
-# `gm mogrify -output-directory thumbnails -quality 95 -resize ${max_x}x${max_y} $file`;
-            if ( $image->create_thumbnail() ) {
-                $build_count++;
-            }
-        }
-    }
-
-    return $build_count;
+    return $self->store->build_thumbnails;
 }
 
 sub path {
-    my ( $self, @rest ) = @_;
-    return Path::Class::dir( $self->base_path, $self->gallery_path || $self->id,
-        @rest );
+    return shift->store->path(@_);
 }
 
 sub thumbnail_path {
-    my $self = shift;
-    return $self->path( $self->thumbnail_dir, @_ );
+    return shift->store->thumbnail_path(@_);
 }
 
 sub thumbnail_uri_path {
     my $self = shift;
     return $self->uri_path( $self->thumbnail_dir, @_ );
+}
+
+sub image_uri {
+    my ( $self, @rest ) = @_;
+    return $self->store->image_uri( @rest );
+}
+
+sub thumbnail_uri {
+    my ( $self, @rest ) = @_;
+    return $self->store->thumbnail_uri( @rest );
 }
 
 sub uri_path {

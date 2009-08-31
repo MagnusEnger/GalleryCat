@@ -5,8 +5,15 @@ use Carp;
 
 use IO::Dir;
 use Path::Class;
+use File::Slurp qw();
 
 use GalleryCat::Image;
+
+has 'gallery' => (
+    is => 'ro',
+    isa => 'Object',
+    required => 1,
+);
 
 has 'thumbnail_dir' => (
     is       => 'ro',
@@ -15,6 +22,26 @@ has 'thumbnail_dir' => (
     default  => 'thumbnails',
 );
 
+has 'base_path' => (
+    is  => 'ro',
+    isa => 'Str',
+);
+
+has 'uri_base' => (
+    is => 'ro',
+    isa => 'Str'
+);
+
+
+has 'gallery_path' => (
+    is  => 'ro',
+    isa => 'Str',
+);
+
+has 'gallery_uri_part' => (
+    is  => 'ro',
+    isa => 'Str',
+);
 
 sub BUILD {
     my $self = shift;
@@ -39,13 +66,14 @@ sub images {
     my @images;
     while ( my $file = $dir->read ) {
         next unless $file =~ / \. (jpe?g|png|gif) $/xsm;
-        push @images, GalleryCat::Image->new( file => $file, gallery => $self );
+        # Hmm, we could precompute a few things here lke URI/path?
+        push @images, GalleryCat::Image->new( { id => $file, gallery => $self->gallery } );
     }
 
     return \@images;
 }
 
-sub find_thumbnails {
+sub list_thumbnails {
     my ($self) = @_;
 
     my $thumbnail_path = $self->thumbnail_path;
@@ -61,7 +89,7 @@ sub find_thumbnails {
     return \@thumbnails;
 }
 
-sub build_thumbnails {
+sub save_thumbnail {
     my ($self) = @_;
 
     my $images         = $self->images;
@@ -73,7 +101,7 @@ sub build_thumbnails {
         mkdir($thumbnail_path);
     }
 
-    my %thumbnail_map = map { $_-> => 1 } @{ $self->list_thumbnails };
+    my %thumbnail_map = map { $_ => 1 } @{ $self->list_thumbnails };
 
     # Create any thumbnails that don't exist
     my $build_count = 0;
@@ -97,10 +125,21 @@ sub build_thumbnails {
     return $build_count;
 }
 
+sub image_file {
+    my ( $self, $image ) = @_;
+    return $self->path( $image->id );
+}
+
+sub image_data {
+    my ( $self, $image ) = @_;
+    my $file = $self->image_file( $image )->stringify;
+    my $data = File::Slurp::read_file($file);
+    return \$data;
+}
+
 sub path {
     my ( $self, @rest ) = @_;
-    return Path::Class::dir( $self->base_path, $self->gallery_path || $self->id,
-        @rest );
+    return Path::Class::dir( $self->base_path, $self->gallery_path || $self->gallery->id, @rest );
 }
 
 sub thumbnail_path {
@@ -113,7 +152,17 @@ sub thumbnail_uri_path {
     return $self->uri_path( $self->thumbnail_dir, @_ );
 }
 
-sub uri_path {
+sub image_uri {
+    my ( $self, $image ) = @_;
+    return $self->_uri( $image->id );
+}
+
+sub thumbnail_uri {
+    my ( $self, $image ) = @_;
+    return $self->_uri( $self->thumbnail_dir, $image->id );
+}
+
+sub _uri {
     my ( $self, @rest ) = @_;
 
     my $uri_base = $self->uri_base;
@@ -123,7 +172,7 @@ sub uri_path {
       if defined( $self->uri_base );
 
     push @path_parts,
-      $self->gallery_uri_path || $self->gallery_path || $self->id;
+      $self->gallery_uri_part || $self->gallery_path || $self->gallery->id;
 
     push @path_parts, @rest;
 

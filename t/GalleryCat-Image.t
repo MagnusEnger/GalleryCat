@@ -9,14 +9,18 @@ BEGIN { use_ok 'GalleryCat::Image' }
 
 # Create test gallery
 
-#`rm -rf t/galleries; cp -r t/fixtures t/galleries`;
+my $test_gallery_dir = '/tmp/galcat_galleries';
+`rm -rf $test_gallery_dir; cp -r t/fixtures/* $test_gallery_dir/`;
+my $base_path = $test_gallery_dir;
 
 # Create a Gallery object to use for these tests. Do a couple of quick
 # tests to make sure the Gallery is sane.
 
 my $gallery = new GalleryCat::Gallery(
     id              => 'market2',
-    base_path       => getcwd() . '/t/galleries',
+    store_config    => {
+        base_path       => $base_path,
+    }
 );
 
 is( $gallery->id, 'market2', 'gallery id sanity check' );
@@ -27,3 +31,7 @@ is( ref($image), 'GalleryCat::Image', 'image from gallery is a GalleryCat::Image
 
 is( $image->width, 602, 'image width');
 is( $image->height, 400, 'image height');
+
+isnt( $image->uri, undef, 'Got something back for uri()');
+isnt( $image->thumbnail_uri, undef, 'Got something back for thumbnail_uri()');
+#is( $image->uri, undef, 'Got something back for display_uri()');

@@ -10,7 +10,7 @@ use Moose::Util::TypeConstraints;
 class_type 'GalleryCat::Gallery';
 class_type 'Path::Class';
 
-has file => (
+has id => (
     is       => 'ro',
     isa      => 'Str',
     required => 1,
@@ -20,6 +20,12 @@ has gallery => (
     is       => 'ro',
     isa      => 'GalleryCat::Gallery',
     required => 1,
+);
+
+has title => (
+    is => 'ro',
+    isa => 'Str',
+    builder => 'read_info',
 );
 
 has _path => (
@@ -32,34 +38,102 @@ has thumbnail => (
     isa => 'Path::Class::Dir',
 );
 
+
+has uri => (
+    is => 'rw',
+    isa => 'Str',
+    builder => '_build_uri',
+    lazy => 1,
+);
+
+has thumbnail_uri => (
+    is => 'rw',
+    isa => 'Str',
+    builder => '_build_thumbnail_uri',
+    lazy => 1,
+);
+
+
+# Image attributes like sizes, things from EXIF data, etc.
+
 has width => (
     is  => 'rw',
-    isa => 'Int'
+    isa => 'Int',
+    lazy => 1,
+    builder => 'read_info',
 );
 
 has height => (
     is  => 'rw',
-    isa => 'Int'
+    isa => 'Int',
+    lazy => 1,
+    builder => 'read_info',
+);
+
+has lazy => (
+    is => 'ro',
+    isa => 'Bool',
+    default => 0,
+);
+
+# Flag to say we've scanned this image for info so
+# we can skip it
+
+has _info_read => (
+    is => 'rw',
+    isa => 'Bool',
+    default => 0
 );
 
 sub BUILD {
     my $self = shift;
 
-    # Verify that the file exists and read its metadata
-
-    if ( !-e $self->path ) {
-        warn( 'Image does not exist: ' . $self->path );
-        return undef;  # die?
+    if ( !$self->lazy ) {
+        $self->read_info();
     }
-
-    # Read image metadata
-    my $info = image_info( $self->path->stringify );
-
-    $self->width( $info->{width} );
-    $self->height( $info->{height} );
 
     return $self;
 }
+
+sub read_info {
+    my ( $self ) = @_;
+
+    return if $self->_info_read();
+    
+    my $info;
+
+    # Try to read the image info from a file or image contents
+
+    if ( my $image_file = $self->gallery->store->image_file($self) ) {
+        $info = image_info( $image_file->stringify );
+    }
+    elsif ( my $image_data = $self->gallery->store->image_data($self) ) {
+        $info = image_info( $image_data );
+    }
+    else {
+        carp("Unable to read image data: " . $self->id);
+        return;
+    }
+    
+    # Set up the image info
+    
+    $self->width( $info->{width} );
+    $self->height( $info->{height} );
+    $self->_info_read(1);
+    
+    # 
+}
+
+sub _build_uri {
+    my $self = shift;
+    return $self->gallery->image_uri( $self );
+}
+
+sub _build_thumbnail_uri {
+    my $self = shift;
+    return $self->gallery->thumbnail_uri( $self );
+}
+
 
 sub path {
     my $self = shift;
@@ -87,8 +161,11 @@ sub thumbnail_uri_path {
 sub create_thumbnail {
     my $self = shift;
     
+    warn('RESIZE');
+    return;
+    
     my $resizer = $self->gallery->resizer;
-    $resizer->resize(
+    my $image = $resizer->resize(
         $self->path->stringify,
         $self->thumbnail_path->stringify,
         $self->gallery->thumbnail_max_width,
@@ -96,11 +173,6 @@ sub create_thumbnail {
     );
 }
 
-sub title {
-    my $self = shift;
-    
-    return $self->file;
-}
 
 no Moose;
 
