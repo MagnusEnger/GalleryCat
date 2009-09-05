@@ -57,7 +57,7 @@ sub init {
         $config = Catalyst::Utils::merge_hashes( \%config_from_file, $config )
     }
 
-    # Go through each individual gallery and merge it's config with the global
+    # Go through each individual gallery and merge its config with the global
     # gallery config.
     
     my %merge_config = %$config;
