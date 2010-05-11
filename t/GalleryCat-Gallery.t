@@ -27,6 +27,7 @@ my $gallery1 = new GalleryCat::Gallery(
 
 my $gallery2 = new GalleryCat::Gallery(
     id              => 'market',
+    name            => 'Test Gallery',
     store_config    => {
         gallery_path    => 'market1',
         base_path       => $base_path,
@@ -34,6 +35,9 @@ my $gallery2 = new GalleryCat::Gallery(
 );
 
 is( $gallery1->id, 'market2', 'id' );
+is( $gallery1->name, 'market2', 'default name' );
+is( $gallery2->name, 'Test Gallery', 'explicit name' );
+
 is( ref($gallery1->store), 'GalleryCat::Store::File', 'default File store loaded');
 is( ref($gallery1->resizer), 'GalleryCat::Resizer::Resize', 'default Resize resizer loaded');
 

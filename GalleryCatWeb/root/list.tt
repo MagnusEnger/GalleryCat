@@ -19,7 +19,7 @@
 [% FOREACH gallery IN galleries %]
  [%- SET url = c.uri_for( c.controller('Gallery').action_for('gallery'), gallery.id ) -%]
  <div class="list-container">
-  <div class="cover"><a href="[% url %]"><img src="[% c.uri_for_static( gallery.cover.uri_path ) %]" /></a></div>
+  <div class="cover"><a href="[% url %]"><img src="[% c.uri_for_static( gallery.cover.image_uri ) %]" /></a></div>
   <div class="gallery-info">
    <h2><a href="[% url %]">[% gallery.name %]</a></h2>
    <div class="gallery-description">[% gallery.description %]</div>

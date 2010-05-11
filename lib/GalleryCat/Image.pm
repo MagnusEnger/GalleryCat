@@ -2,6 +2,7 @@ package GalleryCat::Image;
 
 use Path::Class;
 use Image::Info qw(image_info);
+use Image::ExifTool qw(ImageInfo);
 use GalleryCat::Gallery;
 
 use Moose;
@@ -20,12 +21,27 @@ has gallery => (
     is       => 'ro',
     isa      => 'GalleryCat::Gallery',
     required => 1,
+    weak_ref => 1,
 );
 
 has title => (
     is => 'ro',
     isa => 'Str',
     builder => 'read_info',
+);
+
+has description => (
+    is => 'ro',
+    isa => 'Str',
+    lazy => 1,
+    default => '',
+);
+
+has keywords => (
+    is => 'ro',
+    isa => 'Str',
+    lazy => 1,
+    default => '',
 );
 
 has _path => (
@@ -100,15 +116,21 @@ sub read_info {
 
     return if $self->_info_read();
     
-    my $info;
-
+    my ( $info, $exif );
+    
     # Try to read the image info from a file or image contents
 
     if ( my $image_file = $self->gallery->store->image_file($self) ) {
         $info = image_info( $image_file->stringify );
+        if ( $self->gallery->store->read_exif ) {
+            $exif = ImageInfo( $image_file->stringify );
+        }
     }
     elsif ( my $image_data = $self->gallery->store->image_data($self) ) {
         $info = image_info( $image_data );
+        if ( $self->gallery->store->read_exif ) {
+            $exif = ImageInfo( \$image_data );
+        }
     }
     else {
         carp("Unable to read image data: " . $self->id);
@@ -120,6 +142,11 @@ sub read_info {
     $self->width( $info->{width} );
     $self->height( $info->{height} );
     $self->_info_read(1);
+    
+    if ( $exif ) {
+        # use Data::Dumper;
+        # warn(Dumper($exif));
+    }
     
     # 
 }
@@ -152,6 +179,13 @@ sub uri_path {
     my $self = shift;
     $self->gallery->uri_path( $self->file );
 }
+
+
+sub image_uri {
+    my ( $self ) = @_;
+    return $self->gallery->image_uri( $self );
+}
+
 
 sub thumbnail_uri_path {
     my $self = shift;

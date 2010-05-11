@@ -43,9 +43,6 @@ sub init {
 
     my $config = $self->{gallery_config} || {};
 
-    use Data::Dumper;
-    warn(Dumper($config));
-    
     # First get the path to the general gallery configuration, if it exists.
     # It can be skipped and just defined in the Catalyst Model config, but
     # then none of the external scripts would work without loading the web app.
@@ -63,13 +60,6 @@ sub init {
     my %merge_config = %$config;
     my $galleries = delete $merge_config{galleries};
 
-    # Check that the base_path is rooted, otherwise it should be relative from $home?
-    # This may not be tested yet!
-    
-    if ( $merge_config{base_path} !~ m{^/} ) {
-        $merge_config{base_path} = $self->{home} . '/' . $merge_config{base_path};
-    }
-
     $self->{gallery_list} = [];
     $self->{gallery_map}  = {};
     
@@ -79,6 +69,18 @@ sub init {
         $conf->{id} = $id;
         my $final_conf = Catalyst::Utils::merge_hashes( \%merge_config, $conf );
         my $gallery = GalleryCat::Gallery->new( $final_conf );
+
+        # If we're using the local File store, check that the base_path is rooted, 
+        # otherwise it's relative from Catalyst home.
+
+        if ( $gallery->store_module eq 'File' ) {
+            my $base_path = $gallery->store->base_path;
+            if ( $base_path !~ m{^/} ) {
+                $gallery->store->base_path( $c->path_to( $base_path )->stringify );
+            }
+        }
+
+
         push @{$self->{gallery_list}}, $gallery;
         $self->{gallery_map}->{$id} = $gallery;
     }

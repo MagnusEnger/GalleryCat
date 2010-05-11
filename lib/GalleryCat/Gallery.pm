@@ -17,6 +17,8 @@ has 'id' => (
 has 'name' => (
     is  => 'rw',
     isa => 'Str',
+    lazy => 1,
+    default => sub { $_[0]->id },
 );
 
 has 'description' => (
@@ -100,6 +102,13 @@ has 'resizer_config' => (
 has 'resizer' => (
     is  => 'rw',
     isa => 'Object',
+    lazy => 1,
+    default => sub {
+        my $self = shift;
+        my $resizer_module = 'GalleryCat::Resizer::' . $self->resizer_module;
+        eval "require $resizer_module;";
+        return $self->resizer( $resizer_module->new() );
+    }
 );
 
 
@@ -112,23 +121,11 @@ has 'cover_index' => (
 sub BUILD {
     my $self = shift;
 
-    # if ( !-e $self->path ) {
-    #     die( 'Path to gallery does not exist: ' . $self->path );
-    # }
-
-    my $resizer_module = 'GalleryCat::Resizer::' . $self->resizer_module;
-    eval "require $resizer_module;";
-    $self->resizer( $resizer_module->new() );
-
     my $store_module = 'GalleryCat::Store::' . $self->store_module;
     eval "require $store_module;";
     my $store_config = $self->store_config || {};
     $store_config->{gallery} = $self;
     $self->store( $store_module->new( $store_config ) );
-
-    if ( !defined( $self->name ) ) {
-        $self->name( $self->id );
-    }
 
     return $self;
 }
@@ -159,8 +156,13 @@ sub build_thumbnails {
 
     my %thumbnail_map = map { $_ => 1 } @{ $self->list_thumbnails };
 
-
     return $self->store->build_thumbnails;
+}
+
+sub list_thumbnails {
+    my ( $self ) = @_;
+    
+    return $self->store->list_thumbnails;
 }
 
 sub path {
@@ -196,7 +198,7 @@ sub uri_path {
       if defined( $self->uri_base );
 
     push @path_parts,
-      $self->gallery_uri_path || $self->gallery_path || $self->id;
+      $self->gallery_uri_path || $self->id;
 
     push @path_parts, @rest;
 

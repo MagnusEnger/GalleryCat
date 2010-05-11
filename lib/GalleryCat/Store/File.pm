@@ -23,24 +23,29 @@ has 'thumbnail_dir' => (
 );
 
 has 'base_path' => (
-    is  => 'ro',
+    is  => 'rw',
     isa => 'Str',
 );
 
 has 'uri_base' => (
-    is => 'ro',
+    is => 'rw',
     isa => 'Str'
 );
 
-
 has 'gallery_path' => (
-    is  => 'ro',
+    is  => 'rw',
     isa => 'Str',
 );
 
 has 'gallery_uri_part' => (
-    is  => 'ro',
+    is  => 'rw',
     isa => 'Str',
+);
+
+has 'read_exif' => (
+    is => 'ro',
+    required => 1,
+    default => 1,
 );
 
 sub BUILD {
@@ -165,7 +170,6 @@ sub thumbnail_uri {
 sub _uri {
     my ( $self, @rest ) = @_;
 
-    my $uri_base = $self->uri_base;
     my @path_parts;
 
     push @path_parts, $self->uri_base
