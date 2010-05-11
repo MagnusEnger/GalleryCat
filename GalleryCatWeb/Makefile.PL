@@ -15,7 +15,11 @@ requires 'Config::General'; # This should reflect the config file format you've 
                  # See Catalyst::Plugin::ConfigLoader for supported formats
 
 requires 'Image::Info';
+requires 'Image::ExifTool';
+requires 'IO::Dir';
 requires 'JSON::XS';
+requires 'Path::Class';
+requires 'File::Slurp';
 
 catalyst;
 
