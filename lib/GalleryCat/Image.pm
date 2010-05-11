@@ -25,23 +25,24 @@ has gallery => (
 );
 
 has title => (
-    is => 'ro',
-    isa => 'Str',
+    is => 'rw',
+    isa => 'Maybe[Str]',
+    lazy => 1,
     builder => 'read_info',
 );
 
 has description => (
-    is => 'ro',
-    isa => 'Str',
+    is => 'rw',
+    isa => 'Maybe[Str]',
     lazy => 1,
-    default => '',
+    builder => 'read_info',
 );
 
 has keywords => (
-    is => 'ro',
-    isa => 'Str',
+    is => 'rw',
+    isa => 'Maybe[Str]',
     lazy => 1,
-    default => '',
+    builder => 'read_info',
 );
 
 has _path => (
@@ -115,6 +116,7 @@ sub read_info {
     my ( $self ) = @_;
 
     return if $self->_info_read();
+    $self->_info_read(1);
     
     my ( $info, $exif );
     
@@ -141,14 +143,13 @@ sub read_info {
     
     $self->width( $info->{width} );
     $self->height( $info->{height} );
-    $self->_info_read(1);
     
     if ( $exif ) {
-        # use Data::Dumper;
-        # warn(Dumper($exif));
+       $self->title(        $exif->{Title}       || '' ) if !$self->title;
+       $self->description(  $exif->{Description} || '' ) if !$self->description;
+       $self->keywords(     $exif->{Keywords}    || '' ) if !$self->keywords;
     }
     
-    # 
 }
 
 sub _build_uri {
