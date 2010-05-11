@@ -23,9 +23,17 @@ my $gallery = new GalleryCat::Gallery(
     }
 );
 
+my $gallery2 = new GalleryCat::Gallery(
+    id              => 'exif',
+    store_config    => {
+        base_path       => $base_path,
+    }
+);
+
 is( $gallery->id, 'market2', 'gallery id sanity check' );
 
-my $image = $gallery->images->[0];
+my $image       = $gallery->images->[0];
+my $exif_image1 = $gallery2->images->[0];
 
 is( ref($image), 'GalleryCat::Image', 'image from gallery is a GalleryCat::Image');
 
@@ -35,3 +43,8 @@ is( $image->height, 400, 'image height');
 isnt( $image->uri, undef, 'Got something back for uri()');
 isnt( $image->thumbnail_uri, undef, 'Got something back for thumbnail_uri()');
 #is( $image->uri, undef, 'Got something back for display_uri()');
+
+is( $exif_image1->id, 'lightroom1.jpg', 'File ID read.' );
+is( $exif_image1->title, 'Test Title', 'EXIF title read.' );
+is( $exif_image1->description, 'Test Description', 'EXIF description read.' );
+is( $exif_image1->keywords, 'keywords, multiple word keyword, test', 'EXIF keywords read.');
