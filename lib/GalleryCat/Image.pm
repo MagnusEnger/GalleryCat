@@ -1,73 +1,61 @@
 package GalleryCat::Image;
 
-use Path::Class;
 use Image::Info qw(image_info);
 use Image::ExifTool qw(ImageInfo);
-use GalleryCat::Gallery;
 
 use Moose;
 use Moose::Util::TypeConstraints;
+use MooseX::Types::URI qw(Uri);
+use MooseX::Types::Path::Class qw(File);
 
-class_type 'GalleryCat::Gallery';
-class_type 'Path::Class';
 
 has id => (
-    is       => 'ro',
-    isa      => 'Str',
-    required => 1,
+    is          => 'ro',
+    isa         => 'Str',
+    required    => 1,
 );
 
-has gallery => (
-    is       => 'ro',
-    isa      => 'GalleryCat::Gallery',
-    required => 1,
-    weak_ref => 1,
+has uri => (
+    is          => 'rw',
+    isa         => Uri,
+    required    => 0,
+    coerce      => 1,
 );
 
-has title => (
-    is => 'rw',
-    isa => 'Maybe[Str]',
-    lazy => 1,
-    builder => 'read_info',
-);
-
-has description => (
-    is => 'rw',
-    isa => 'Maybe[Str]',
-    lazy => 1,
-    builder => 'read_info',
-);
-
-has keywords => (
-    is => 'rw',
-    isa => 'Maybe[Str]',
-    lazy => 1,
-    builder => 'read_info',
-);
-
-has _path => (
-    is  => 'rw',
-    isa => 'Path::Class::Dir',
+has path => (
+    is          => 'rw',
+    isa         => File,
+    coerce      => 1,
+    required    => 0,
 );
 
 has thumbnail => (
-    is  => 'ro',
-    isa => 'Path::Class::Dir',
+    is          => 'rw',
+    isa         => 'GalleryCat::Image',
+    required    => 0,
 );
 
-
-has uri => (
-    is => 'rw',
-    isa => 'Str',
-    builder => '_build_uri',
-    lazy => 1,
+has image_data => (
+    is          => 'rw',
+    isa         => 'Maybe',
 );
 
-has thumbnail_uri => (
-    is => 'rw',
-    isa => 'Str',
-    builder => '_build_thumbnail_uri',
-    lazy => 1,
+has title => (
+    is          => 'rw',
+    isa         => 'Maybe[Str]',
+    required    => 0,
+);
+
+has description => (
+    is          => 'rw',
+    isa         => 'Maybe[Str]',
+    required    => 0,
+);
+
+has keywords => (
+    is          => 'rw',
+    isa         => 'Maybe[Str]',
+    required    => 0,
 );
 
 
@@ -77,14 +65,12 @@ has width => (
     is  => 'rw',
     isa => 'Int',
     lazy => 1,
-    builder => 'read_info',
 );
 
 has height => (
     is  => 'rw',
     isa => 'Int',
     lazy => 1,
-    builder => 'read_info',
 );
 
 has lazy => (
@@ -93,28 +79,12 @@ has lazy => (
     default => 0,
 );
 
-# Flag to say we've scanned this image for info so
-# we can skip it
 
-has _info_read => (
-    is => 'rw',
-    isa => 'Bool',
-    default => 0
-);
-
-sub BUILD {
-    my $self = shift;
-
-    if ( !$self->lazy ) {
-        $self->read_info();
-    }
-
-    return $self;
-}
 
 sub read_info {
     my ( $self ) = @_;
 
+    return;
     return if $self->_info_read();
     $self->_info_read(1);
     
@@ -152,46 +122,7 @@ sub read_info {
     
 }
 
-sub _build_uri {
-    my $self = shift;
-    return $self->gallery->image_uri( $self );
-}
 
-sub _build_thumbnail_uri {
-    my $self = shift;
-    return $self->gallery->thumbnail_uri( $self );
-}
-
-
-sub path {
-    my $self = shift;
-    if ( !defined( $self->_path ) ) {
-        $self->_path( $self->gallery->path( $self->file ) );
-    }
-    return $self->_path;
-}
-
-sub thumbnail_path {
-    my $self = shift;
-    return $self->gallery->thumbnail_path( $self->file );
-}
-
-sub uri_path {
-    my $self = shift;
-    $self->gallery->uri_path( $self->file );
-}
-
-
-sub image_uri {
-    my ( $self ) = @_;
-    return $self->gallery->image_uri( $self );
-}
-
-
-sub thumbnail_uri_path {
-    my $self = shift;
-    $self->gallery->thumbnail_uri_path( $self->file );
-}
 
 sub create_thumbnail {
     my $self = shift;
