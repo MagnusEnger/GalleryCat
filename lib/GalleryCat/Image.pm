@@ -64,21 +64,12 @@ has keywords => (
 has width => (
     is  => 'rw',
     isa => 'Int',
-    lazy => 1,
 );
 
 has height => (
     is  => 'rw',
     isa => 'Int',
-    lazy => 1,
 );
-
-has lazy => (
-    is => 'ro',
-    isa => 'Bool',
-    default => 0,
-);
-
 
 
 sub read_info {

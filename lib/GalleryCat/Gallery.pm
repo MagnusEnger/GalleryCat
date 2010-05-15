@@ -26,6 +26,23 @@ has 'description' => (
     isa => 'Str',
 );
 
+has 'hidden' => (
+    is => 'ro',
+    isa => 'Bool',
+    default => 0,
+);
+
+has 'password' => (
+    is => 'ro',
+    isa => 'Bool',
+    default => 0,
+);
+
+has 'galleries' => (
+    is => 'rw',
+    isa => 'ArrayRef',
+    required => 0,
+);
 
 has 'uri_base' => (
     is  => 'ro',
@@ -37,12 +54,6 @@ has 'gallery_uri_path' => (
     isa => 'Str',
 );
 
-has 'thumbnail_dir' => (
-    is       => 'ro',
-    isa      => 'Str',
-    required => 1,
-    default  => 'thumbnails',
-);
 
 has 'thumbnails_per_page' => (
     is      => 'ro',
@@ -121,11 +132,11 @@ has 'cover_index' => (
 sub BUILD {
     my $self = shift;
 
-    my $store_module = 'GalleryCat::Store::' . $self->store_module;
-    eval "require $store_module;";
-    my $store_config = $self->store_config || {};
-    $store_config->{gallery} = $self;
-    $self->store( $store_module->new( $store_config ) );
+    # my $store_module = 'GalleryCat::Store::' . $self->store_module;
+    # eval "require $store_module;";
+    # my $store_config = $self->store_config || {};
+    # $store_config->{gallery} = $self;
+    # $self->store( $store_module->new( $store_config ) );
 
     return $self;
 }
@@ -203,6 +214,14 @@ sub uri_path {
     push @path_parts, @rest;
 
     return join '/', @path_parts;
+}
+
+sub image_count {
+    return shift->store->image_count();
+}
+
+sub images {
+    return shift->store->images(@_);
 }
 
 no Moose;

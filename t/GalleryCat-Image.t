@@ -43,8 +43,8 @@ $image->thumbnail( $thumbnail );
 isa_ok( $image->thumbnail,      'GalleryCat::Image', 'got back a thumbnail image');
 is(     $image->thumbnail->id,  'thumbnail-market2', 'got back expected thumbnail image');
 
-isa_ok( $image->uri,      'URI', 'URI object.' );
-isa_ok( $thumbnail->uri,  'URI', 'coerced URI object.' );
+isa_ok( $image->uri,      'URI', 'explicit URI object' );
+isa_ok( $thumbnail->uri,  'URI', 'coerced URI object' );
 
 is( $image->width,  200, 'image width');
 is( $image->height, 300, 'image height');
