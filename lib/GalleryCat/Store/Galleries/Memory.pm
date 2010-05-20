@@ -6,7 +6,7 @@ use Hash::Merge qw(merge);
 
 use GalleryCat::Gallery;
 
-extends 'GalleryCat::Store';
+extends 'GalleryCat::Store::Galleries';
 
 has 'shared_config' => (
     is          => 'ro',

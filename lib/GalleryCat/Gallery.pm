@@ -80,22 +80,26 @@ has 'thumbnail_max_height' => (
 );
 
 
-has 'store_module' => (
+has 'images_store_module' => (
     is       => 'ro',
     isa      => 'Str',
     required => 1,
     default  => 'File',
 );
 
-has 'store_config' => (
+has 'images_store_config' => (
     is       => 'ro',
     isa      => 'HashRef',
+    default  => sub {{}},
 );
 
-has 'store' => (
+has 'images_store' => (
     is => 'rw',
     isa => 'Object',
+    handles => [ qw( images_count ) ],
+    
 );
+
 
 
 has 'resizer_module' => (
@@ -132,11 +136,12 @@ has 'cover_index' => (
 sub BUILD {
     my $self = shift;
 
-    # my $store_module = 'GalleryCat::Store::' . $self->store_module;
-    # eval "require $store_module;";
-    # my $store_config = $self->store_config || {};
+    my $store_module = 'GalleryCat::Store::Images::' . $self->images_store_module;
+    eval "require $store_module;";
+    my $store_config = $self->images_store_config;
     # $store_config->{gallery} = $self;
-    # $self->store( $store_module->new( $store_config ) );
+    $self->images_store( $store_module->new( $store_config ) );
+
 
     return $self;
 }

@@ -1,4 +1,4 @@
-package GalleryCat::Store::Image::File;
+package GalleryCat::Store::Images::File;
 
 use Moose;
 use Carp;
@@ -9,11 +9,18 @@ use File::Slurp qw();
 
 use GalleryCat::Image;
 
-has 'gallery' => (
-    is => 'ro',
-    isa => 'Object',
-    required => 1,
+has 'gallery_id' => (
+    is      => 'ro',
+    isa     => 'Str',
+    requird => 1,
 );
+
+has 'path' => (
+    is  => 'rw',
+    isa => 'Str',
+);
+
+
 
 has 'thumbnail_dir' => (
     is       => 'ro',
@@ -22,22 +29,12 @@ has 'thumbnail_dir' => (
     default  => 'thumbnails',
 );
 
-has 'base_path' => (
-    is  => 'rw',
-    isa => 'Str',
-);
-
 has 'uri_base' => (
     is => 'rw',
     isa => 'Str'
 );
 
-has 'gallery_path' => (
-    is  => 'rw',
-    isa => 'Str',
-);
-
-has 'gallery_uri_part' => (
+has 'uri_part' => (
     is  => 'rw',
     isa => 'Str',
 );

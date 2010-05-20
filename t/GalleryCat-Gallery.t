@@ -38,13 +38,14 @@ is( $gallery1->id, 'market2', 'id' );
 is( $gallery1->name, 'market2', 'default name' );
 is( $gallery2->name, 'Test Gallery', 'explicit name' );
 
-is( ref($gallery1->store), 'GalleryCat::Store::File', 'default File store loaded');
+is( ref($gallery1->images_store), 'GalleryCat::Store::Images::File', 'default File store loaded');
 is( ref($gallery1->resizer), 'GalleryCat::Resizer::Resize', 'default Resize resizer loaded');
 
-is( scalar( @{$gallery1->images}), 8, 'count of images' );
-is( scalar( @{$gallery2->images}), 11, 'count of images' );
+is( $gallery1->image_count ),  8, 'count of images' );
+is( $gallery1->image_count ), 11, 'count of images' );
 
-is( ref($gallery1->images->[0]), 'GalleryCat::Image', 'images are GalleryCat::Images');
+# is( ref($gallery1->images->[0]), 'GalleryCat::Image', 'images are GalleryCat::Images');
+
 
 
 # Test failing conditions
