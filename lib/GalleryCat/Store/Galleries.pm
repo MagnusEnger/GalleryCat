@@ -3,7 +3,7 @@ package GalleryCat::Store::Galleries;
 use Moose;
 use Carp;
 
-
+extends 'GalleryCat::Store';
 
 no Moose;
 
