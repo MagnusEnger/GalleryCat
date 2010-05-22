@@ -72,9 +72,17 @@ sub gallery_count {
 # Retrieve one or more galleries by id.
 
 sub galleries {
-    my $self = shift;
-    my $galleries = $self->_galleries;
-    my @galleries = map { $galleries->{$_} } @_;
+    my ( $self, @rest ) = @_;
+    
+    if ( ref($rest[0]) eq 'ARRAY' ) {
+        # Retrieve a range of galleries
+    }
+    else {
+        # Retrieve galleries by ID
+        my $galleries = $self->_galleries;
+        my @galleries = map { $galleries->{$_} } @rest;
+        return \@galleries;
+    }
 }
 
 

@@ -87,6 +87,11 @@ sub BUILD {
     return $self;
 }
 
+sub galleries {
+    my ( $self, @rest ) = @_;
+    
+    return $self->store->galleries(@rest);
+}
 
 no Moose;
 
