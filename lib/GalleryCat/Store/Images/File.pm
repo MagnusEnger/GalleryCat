@@ -9,12 +9,6 @@ use File::Slurp qw();
 
 use GalleryCat::Image;
 
-has 'gallery_id' => (
-    is      => 'ro',
-    isa     => 'Str',
-    requird => 1,
-);
-
 has 'path' => (
     is  => 'rw',
     isa => 'Str',
@@ -139,46 +133,46 @@ sub image_data {
     return \$data;
 }
 
-sub path {
-    my ( $self, @rest ) = @_;
-    return Path::Class::dir( $self->base_path, $self->gallery_path || $self->gallery->id, @rest );
-}
-
-sub thumbnail_path {
-    my $self = shift;
-    return $self->path( $self->thumbnail_dir, @_ );
-}
-
-sub thumbnail_uri_path {
-    my $self = shift;
-    return $self->uri_path( $self->thumbnail_dir, @_ );
-}
-
-sub image_uri {
-    my ( $self, $image ) = @_;
-    return $self->_uri( $image->id );
-}
-
-sub thumbnail_uri {
-    my ( $self, $image ) = @_;
-    return $self->_uri( $self->thumbnail_dir, $image->id );
-}
-
-sub _uri {
-    my ( $self, @rest ) = @_;
-
-    my @path_parts;
-
-    push @path_parts, $self->uri_base
-      if defined( $self->uri_base );
-
-    push @path_parts,
-      $self->gallery_uri_part || $self->gallery_path || $self->gallery->id;
-
-    push @path_parts, @rest;
-
-    return join '/', @path_parts;
-}
+# sub path {
+#     my ( $self, @rest ) = @_;
+#     return Path::Class::dir( $self->base_path, $self->gallery_path || $self->gallery->id, @rest );
+# }
+# 
+# sub thumbnail_path {
+#     my $self = shift;
+#     return $self->path( $self->thumbnail_dir, @_ );
+# }
+# 
+# sub thumbnail_uri_path {
+#     my $self = shift;
+#     return $self->uri_path( $self->thumbnail_dir, @_ );
+# }
+# 
+# sub image_uri {
+#     my ( $self, $image ) = @_;
+#     return $self->_uri( $image->id );
+# }
+# 
+# sub thumbnail_uri {
+#     my ( $self, $image ) = @_;
+#     return $self->_uri( $self->thumbnail_dir, $image->id );
+# }
+# 
+# sub _uri {
+#     my ( $self, @rest ) = @_;
+# 
+#     my @path_parts;
+# 
+#     push @path_parts, $self->uri_base
+#       if defined( $self->uri_base );
+# 
+#     push @path_parts,
+#       $self->gallery_uri_part || $self->gallery_path || $self->gallery->id;
+# 
+#     push @path_parts, @rest;
+# 
+#     return join '/', @path_parts;
+# }
 
 no Moose;
 

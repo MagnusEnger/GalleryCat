@@ -55,7 +55,22 @@ sub BUILD {
             $galleries->{$id} = $gallery;
         }
     }
+
+    # Set up parent/child relationships
+    
+    my @gallery_list = values(%$galleries);
+    foreach my $gallery ( @gallery_list ) {
+        my @kids = map { $_->id } 
+                    sort { $a->order <=> $b->order }
+                    grep { defined($_->parent) && $_->parent eq $gallery->id } 
+                    @gallery_list;
+
+        $gallery->galleries( \@kids ) if scalar(@kids);
+    }
+    
     $self->_galleries($galleries);
+
+
 
     return $self;
 }
@@ -75,14 +90,18 @@ sub galleries {
     my ( $self, @rest ) = @_;
     
     if ( ref($rest[0]) eq 'ARRAY' ) {
-        # Retrieve a range of galleries
+        # Retrieve an ordered range of galleries??  This might not be necessary to do.
     }
     else {
         # Retrieve galleries by ID
-        my $galleries = $self->_galleries;
-        my @galleries = map { $galleries->{$_} } @rest;
+        my @galleries = map { $self->_galleries->{$_} } @rest;
         return \@galleries;
     }
+}
+
+sub gallery {
+    my ( $self, $gallery_id ) = @_;
+    return $self->_galleries->{$gallery_id};
 }
 
 

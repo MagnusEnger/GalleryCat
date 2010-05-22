@@ -1,22 +1,15 @@
-package GalleryCat::Store::Images;
+package GalleryCat::Store::Images::Null;
 
 use Moose;
 use Carp;
 
-use GalleryCat::Image;
-
-has 'gallery_id' => (
-    is      => 'ro',
-    isa     => 'Str',
-    required => 1,
-);
-
+extends 'GalleryCat::Store::Images';
 
 no Moose;
 
 =head1 NAME
 
-GalleryCat::Store::Images - Base class for images stores
+GalleryCat::Store::Image::File - Moose class for handling Galleries
 
 =head1 DESCRIPTION
 

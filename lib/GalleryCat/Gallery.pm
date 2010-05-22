@@ -26,6 +26,22 @@ has 'description' => (
     isa => 'Str',
 );
 
+has 'date' => (
+    is => 'ro',
+    isa => 'Date',
+);
+
+has 'parent' => (
+    is => 'rw',
+    isa => 'Str|Int',
+);
+
+has 'order' => (
+    is => 'rw',
+    isa => 'Int',
+    default => 0,
+);
+
 has 'hidden' => (
     is => 'ro',
     isa => 'Bool',
@@ -139,7 +155,7 @@ sub BUILD {
     my $store_module = 'GalleryCat::Store::Images::' . $self->images_store_module;
     eval "require $store_module;";
     my $store_config = $self->images_store_config;
-    # $store_config->{gallery} = $self;
+    $store_config->{gallery_id} = $self->id;
     $self->images_store( $store_module->new( $store_config ) );
 
 

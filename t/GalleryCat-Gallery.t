@@ -20,6 +20,8 @@ my $base_path = $test_gallery_dir;
 
 my $gallery1 = new GalleryCat::Gallery(
     id              => 'market2',
+    parent          => 'market',
+    order           => 0,
     store_config    => {
         base_path       => $base_path,
     }
@@ -34,6 +36,17 @@ my $gallery2 = new GalleryCat::Gallery(
     }
 );
 
+my $gallery3 = new GalleryCat::Gallery(
+    id              => 'subgallery',
+    name            => 'Sub Gallery',
+    parent          => 'market',
+    order           => 1,
+    store_config    => {
+        gallery_path    => 'market-sub',
+        base_path       => $base_path,
+    }
+);
+
 is( $gallery1->id, 'market2', 'id' );
 is( $gallery1->name, 'market2', 'default name' );
 is( $gallery2->name, 'Test Gallery', 'explicit name' );
@@ -41,8 +54,10 @@ is( $gallery2->name, 'Test Gallery', 'explicit name' );
 is( ref($gallery1->images_store), 'GalleryCat::Store::Images::File', 'default File store loaded');
 is( ref($gallery1->resizer), 'GalleryCat::Resizer::Resize', 'default Resize resizer loaded');
 
-is( $gallery1->image_count ),  8, 'count of images' );
-is( $gallery1->image_count ), 11, 'count of images' );
+
+# is( $gallery1->image_count,  8, 'count of images' );
+# is( $gallery1->image_count, 11, 'count of images' );
+
 
 # is( ref($gallery1->images->[0]), 'GalleryCat::Image', 'images are GalleryCat::Images');
 

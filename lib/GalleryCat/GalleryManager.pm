@@ -93,6 +93,12 @@ sub galleries {
     return $self->store->galleries(@rest);
 }
 
+sub main_gallery {
+    my ( $self, @rest ) = @_;
+    
+    return $self->store->main_gallery(@rest);
+}
+
 no Moose;
 
 =head1 NAME
