@@ -16,7 +16,10 @@ Catalyst Controller.
 
 =cut
 
-sub base : Chained('/') PathPart('gallery') CaptureArgs(0) {}
+sub base : Chained('/') PathPart('gallery') CaptureArgs(0) {
+    my ( $self, $c ) = @_;
+    $c->stash->{gm} = $c->model('GalleryCatManager');
+}
 
 =head2 index
 
@@ -25,7 +28,10 @@ sub base : Chained('/') PathPart('gallery') CaptureArgs(0) {}
 sub index : Chained('base') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash->{galleries} = $c->model('GalleryCat')->gallery_list;
+    $c->stash->{gallery}   = $c->stash->{gm}->gallery( $c->stash->{gm}->main_gallery );
+
+    # TODO: Page this for large main galleries?
+    $c->stash->{galleries} = $c->stash->{gm}->galleries( $c->stash->{gallery}->galleries );
 
     $c->stash->{template} = 'list.tt';
 }
@@ -33,8 +39,7 @@ sub index : Chained('base') PathPart('') Args(0) {
 sub gallery : Chained('base') PathPart('') Args(1)  {
     my ( $self, $c, $gallery_id ) = @_;
 
-    $c->stash->{gallery_cat} = $c->model('GalleryCat');  # Cache this later, obviously.
-    my $gallery = $c->stash->{gallery} = $c->stash->{gallery_cat}->gallery($gallery_id);
+    my $gallery = $c->stash->{gallery} = $c->stash->{gm}->gallery($gallery_id);
 
     # Make sure thumbnails are available
     $c->stash->{gallery}->build_thumbnails;
