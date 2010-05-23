@@ -21,7 +21,11 @@ body {
 }
 
 
-/* List page */
+/* Galleries list page */
+
+#gallery #gallery-info {
+    text-align: center;
+}
 
 #gallery #list {
     margin: 20px auto;
@@ -39,7 +43,11 @@ body {
 #gallery .list-container {
     padding: 5px;
     clear: both;
-    border-bottom: 1px solid #333;
+    border-top: 1px solid #333;
+}
+
+#gallery .list-container.first {
+    border-top: none;
 }
 
 #gallery .cover {
@@ -48,6 +56,11 @@ body {
 
 #gallery .gallery-info {
     float: right;
+}
+
+#gallery .cover-placeholder  {
+    text-align: center;
+    border: 1px solid #ddd;
 }
 
 /* Gallery page */

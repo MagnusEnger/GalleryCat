@@ -6,15 +6,18 @@ use Carp;
 use IO::Dir;
 use Path::Class;
 use File::Slurp qw();
+use List::Flatten qw(flat);
 
-use GalleryCat::Image;
+use Image::Size;
+use Image::ExifTool qw(ImageInfo);
+
+extends 'GalleryCat::Store::Images';
 
 has 'path' => (
-    is  => 'rw',
-    isa => 'Str',
+    is      => 'rw',
+    isa     => 'Path::Class::Dir',
+    coerce  => 1,
 );
-
-
 
 has 'thumbnail_dir' => (
     is       => 'ro',
@@ -41,12 +44,81 @@ has 'read_exif' => (
 
 sub BUILD {
     my $self = shift;
+    
+    # TODO: Make path buildable from a base + id?
 
+    $self->logger->trace( 'Checking for path: ', $self->path->stringify );
     if ( !-e $self->path ) {
-        die( 'Path to gallery does not exist: ' . $self->path );
+        croak( 'Path to gallery does not exist: ' . $self->path->stringify );
+    }
+    
+    # Find all images for this file store by reading
+    # all the files in the path.
+    my $dir = $self->path->open();
+    if ( !defined($dir) ) {
+        croak( 'Unable to open directory for reading: ' . $self->path->stringify );
     }
 
+    $self->logger->trace('Reading path: ', $self->path);
+    my @images;
+    while ( my $filename = $dir->read ) {
+        next unless $filename =~ / \. (jpe?g|png|gif) $/xsm;
+        $self->logger->trace('Found image file: ', $filename);
+        my $file = Path::Class::File->new( $self->path, $filename );
+        # Read file information. Might want to move this into a Role so it could 
+        # be applied to other stores.
+
+        my $size = $self->get_image_size($file);
+        my $info = $self->get_image_info($file);
+
+        push @images, GalleryCat::Image->new({
+            id          => $filename,
+            file        => $file,
+            width       => $size->[0],
+            height      => $size->[1],
+            title       => $info->{title},
+            description => $info->{description},
+            keywords    => $info->{keywords},
+        });
+    }
+
+    # TODO: Check for thumbnails and build if necessary
+
     return $self;
+}
+
+# Turn this into a Role for Stores that have local access to the file.
+sub get_image_size {
+    my ( $self, $file ) = @_;
+    my ( $width, $height ) = imgsize($file->stringify);
+    
+    $self->logger->trace("Read image size: $width x $height");
+    return [ $width, $height ];
+}
+
+# Turn this into a Role for Stores that have local access to the file.
+sub get_image_info {
+    my ( $self, $file ) = @_;
+    
+    my $exif = ImageInfo( $file->stringify );
+    if ( $exif ) {
+        my $info = {
+            title       => $exif->{Title},
+            description => $exif->{Description},
+            keywords    => $exif->{Keywords},
+        };
+    }
+
+    return {};
+}
+
+sub images_by_id {
+    my ( $self, @rest ) = @_;
+}
+
+sub images_by_index {
+    my ( $self, $start, $end ) = @_;
+    $end ||= $start;
 }
 
 sub images {
@@ -54,19 +126,8 @@ sub images {
 
     my $path = $self->path;
 
-    my $dir = $path->open();
-    if ( !defined($dir) ) {
-        croak( 'Unable to open directory for reading: ' . $path );
-    }
 
-    my @images;
-    while ( my $file = $dir->read ) {
-        next unless $file =~ / \. (jpe?g|png|gif) $/xsm;
-        # Hmm, we could precompute a few things here lke URI/path?
-        push @images, GalleryCat::Image->new( { id => $file, gallery => $self->gallery } );
-    }
-
-    return \@images;
+    # return \@images;
 }
 
 sub list_thumbnails {

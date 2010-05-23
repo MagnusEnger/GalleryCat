@@ -3,6 +3,8 @@ package GalleryCat::Store::Images;
 use Moose;
 use Carp;
 
+extends 'GalleryCat::Store';
+
 use GalleryCat::Image;
 
 has 'gallery_id' => (

@@ -1,0 +1,49 @@
+<style>
+#gallery #list {
+    width: [% ( ( gallery.cover_width || 200 ) * 3 ) + 20 %]px;
+}
+
+#gallery #list .gallery-info {
+    width: [% ( ( gallery.cover_width || 200 ) * 2 ) %]px;
+}
+
+#gallery .cover img, #gallery .cover, #gallery .cover-placeholder  {
+    width: [% ( gallery.cover_width || 200 ) %]px;
+}
+
+#gallery .cover-placeholder  {
+    height: [% ( gallery.cover_height || 133 ) %]px;
+    line-height: [% ( gallery.cover_height || 133 ) %]px;
+}
+</style>
+
+<div id="gallery">
+
+<div id="gallery-info">
+ <h1>[% gallery.name %]</h1>
+ <div id="gallery-description">[% gallery.description %]</div>
+</div>
+    
+<div id="list">
+[% FOREACH subgallery IN galleries %]
+ [%- SET url = c.uri_for( c.controller('Gallery').action_for('gallery'), subgallery.id ) -%]
+ <div class="list-container [% ' first' IF loop.first %][% ' last' IF loop.last %]">
+  <div class="cover"><a href="[% url %]">[% PROCESS cover %]</a></div>
+  <div class="gallery-info">
+   <h2><a href="[% url %]">[% subgallery.name %]</a></h2>
+   <div class="gallery-description">[% subgallery.description %]</div>
+  </div>
+  <div style="clear: both"></div>
+ </div>
+[% END %]
+</div>
+
+</div>
+
+[%- BLOCK cover -%]
+[%- IF subgallery.cover -%]
+ <img src="[% c.uri_for_static( subgallery.cover.image_uri ) %]" />
+[%- ELSE -%]
+ <div class="cover-placeholder">No Cover Image</div>
+[%- END -%]
+[%- END -%]

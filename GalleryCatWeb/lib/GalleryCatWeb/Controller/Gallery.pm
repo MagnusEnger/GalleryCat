@@ -18,7 +18,7 @@ Catalyst Controller.
 
 sub base : Chained('/') PathPart('gallery') CaptureArgs(0) {
     my ( $self, $c ) = @_;
-    $c->stash->{gm} = $c->model('GalleryCatManager');
+    $c->stash->{gm} = $c->model('GalleryCat');
 }
 
 =head2 index
@@ -27,38 +27,38 @@ sub base : Chained('/') PathPart('gallery') CaptureArgs(0) {
 
 sub index : Chained('base') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
-
-    $c->stash->{gallery}   = $c->stash->{gm}->gallery( $c->stash->{gm}->main_gallery );
-
-    # TODO: Page this for large main galleries?
-    $c->stash->{galleries} = $c->stash->{gm}->galleries( $c->stash->{gallery}->galleries );
-
-    $c->stash->{template} = 'list.tt';
+    $c->forward( 'gallery', [ $c->stash->{gm}->main_gallery ] );
 }
 
-sub gallery : Chained('base') PathPart('') Args(1)  {
+sub gallery : Chained('base') PathPart('') Args(1) {
     my ( $self, $c, $gallery_id ) = @_;
 
     my $gallery = $c->stash->{gallery} = $c->stash->{gm}->gallery($gallery_id);
 
+    my $galleries   = $c->stash->{gm}->galleries( $gallery->galleries );    # TODO: Page this?
+    # my $images      = $gallery->images;     # TODO: Page this?
+
     # Make sure thumbnails are available
-    $c->stash->{gallery}->build_thumbnails;
+    # $c->stash->{gallery}->build_thumbnails;
 
-    my $images = $c->stash->{gallery}->images;
 
-    my @images = map {
-        {
-            url       => '' . $c->uri_for_static( $_->uri_path ),
-            thumbnail => '' . $c->uri_for_static( $_->thumbnail_uri_path ),
-            title     => $_->title,
-            width     => $_->width,
-            height    => $_->height,
-        }
-    } @{$images};
+    # my @images = map {
+    #     {
+    #         url       => '' . $c->uri_for_static( $_->uri_path ),
+    #         thumbnail => '' . $c->uri_for_static( $_->thumbnail_uri_path ),
+    #         title     => $_->title,
+    #         width     => $_->width,
+    #         height    => $_->height,
+    #     }
+    # } @{$images};
+    # 
+    # $c->stash->{images}      = \@images;
+    # $c->stash->{images_json} = JSON::XS->new->utf8->encode( \@images );
 
-    $c->stash->{images}      = \@images;
-    $c->stash->{images_json} = JSON::XS->new->utf8->encode( \@images );
-    $c->stash->{template}    = 'gallery.tt';
+    $c->stash->{galleries}   = $galleries;
+    $c->stash->{template}    =    $gallery->format eq 'galleries' ? 'galleries.tt'
+                                : $gallery->format eq 'images'    ? 'images.tt'
+                                : 'images.tt';
 }
 
 =head1 AUTHOR

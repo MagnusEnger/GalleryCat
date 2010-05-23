@@ -30,7 +30,7 @@ GalleryCatWeb::Controller::Root - Root Controller for GalleryCatWeb
 
 sub index : Path : Args(0) {
     my ( $self, $c ) = @_;
-    $c->forward( 'Gallery', 'index' );
+    $c->redirect( $c->uri_for( $c->controller('Gallery')->action_for('index') ) );
 }
 
 sub default : Path {

@@ -40,6 +40,13 @@ sub uri_for_static {
     return defined($params) ? $c->uri_for( '/static/' . $path, $params ) : $c->uri_for( '/static/' . $path );
 }
 
+sub redirect {
+    my ( $c, $uri ) = @_;
+
+    $c->res->redirect( $uri );
+    $c->detach();
+}
+
 
 =head1 NAME
 

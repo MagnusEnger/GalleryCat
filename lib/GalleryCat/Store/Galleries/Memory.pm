@@ -3,6 +3,7 @@ package GalleryCat::Store::Galleries::Memory;
 use Moose;
 
 use Hash::Merge qw(merge);
+use List::Flatten qw(flat);
 
 use GalleryCat::Gallery;
 
@@ -88,22 +89,19 @@ sub gallery_count {
 
 sub galleries {
     my ( $self, @rest ) = @_;
-    
-    if ( ref($rest[0]) eq 'ARRAY' ) {
-        # Retrieve an ordered range of galleries??  This might not be necessary to do.
-    }
-    else {
-        # Retrieve galleries by ID
-        my @galleries = map { $self->_galleries->{$_} } @rest;
-        return \@galleries;
-    }
+    return undef if !scalar(@rest);
+
+    # TODO: Should we do something special if passed an arrayref? For now just flatten.
+
+    # Retrieve galleries by ID
+    my @galleries = map { $self->_galleries->{$_} } flat @rest;
+    return \@galleries;
 }
 
 sub gallery {
     my ( $self, $gallery_id ) = @_;
     return $self->_galleries->{$gallery_id};
 }
-
 
 no Moose;
 

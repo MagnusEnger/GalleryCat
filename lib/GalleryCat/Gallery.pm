@@ -1,10 +1,9 @@
 package GalleryCat::Gallery;
 
 use Moose;
+use Moose::Util::TypeConstraints;
 use Carp;
 
-use IO::Dir;
-use Path::Class;
 use GalleryCat::Image;
 use Catalyst::Utils;
 
@@ -40,6 +39,12 @@ has 'order' => (
     is => 'rw',
     isa => 'Int',
     default => 0,
+);
+
+has 'format' => (
+    is => 'rw',
+    isa => enum([ qw( galleries images ) ]),
+    default => 'images',
 );
 
 has 'hidden' => (
@@ -144,9 +149,13 @@ has 'resizer' => (
 
 
 has 'cover_index' => (
-    is      => 'ro',
+    is      => 'rw',
     isa     => 'Int',
-    default => 0,
+);
+
+has 'cover_id' => (
+    is      => 'rw',
+    isa     => 'Str|Int',
 );
 
 sub BUILD {
@@ -158,7 +167,6 @@ sub BUILD {
     $store_config->{gallery_id} = $self->id;
     $self->images_store( $store_module->new( $store_config ) );
 
-
     return $self;
 }
 
@@ -168,7 +176,9 @@ sub BUILD {
 
 sub cover {
     my ($self) = @_;
-    return $self->images->[ $self->cover_index ];
+    return    $self->cover_id    ? $self->store->images_by_id( $self->cover_id )
+            : $self->cover_index ? $self->store->images_by_index( $self->cover_index )
+            : undef;
 }
 
 sub images {
@@ -183,59 +193,59 @@ sub images {
     return $images;
 }
 
-sub build_thumbnails {
-    my ($self) = @_;
+# sub build_thumbnails {
+#     my ($self) = @_;
+# 
+#     my %thumbnail_map = map { $_ => 1 } @{ $self->list_thumbnails };
+# 
+#     return $self->store->build_thumbnails;
+# }
+# 
+# sub list_thumbnails {
+#     my ( $self ) = @_;
+#     
+#     return $self->store->list_thumbnails;
+# }
+# 
+# sub path {
+#     return shift->store->path(@_);
+# }
+# 
+# sub thumbnail_path {
+#     return shift->store->thumbnail_path(@_);
+# }
+# 
+# sub thumbnail_uri_path {
+#     my $self = shift;
+#     return $self->uri_path( $self->thumbnail_dir, @_ );
+# }
+# 
+# sub image_uri {
+#     my ( $self, @rest ) = @_;
+#     return $self->store->image_uri( @rest );
+# }
+# 
+# sub thumbnail_uri {
+#     my ( $self, @rest ) = @_;
+#     return $self->store->thumbnail_uri( @rest );
+# }
 
-    my %thumbnail_map = map { $_ => 1 } @{ $self->list_thumbnails };
-
-    return $self->store->build_thumbnails;
-}
-
-sub list_thumbnails {
-    my ( $self ) = @_;
-    
-    return $self->store->list_thumbnails;
-}
-
-sub path {
-    return shift->store->path(@_);
-}
-
-sub thumbnail_path {
-    return shift->store->thumbnail_path(@_);
-}
-
-sub thumbnail_uri_path {
-    my $self = shift;
-    return $self->uri_path( $self->thumbnail_dir, @_ );
-}
-
-sub image_uri {
-    my ( $self, @rest ) = @_;
-    return $self->store->image_uri( @rest );
-}
-
-sub thumbnail_uri {
-    my ( $self, @rest ) = @_;
-    return $self->store->thumbnail_uri( @rest );
-}
-
-sub uri_path {
-    my ( $self, @rest ) = @_;
-
-    my $uri_base = $self->uri_base;
-    my @path_parts;
-
-    push @path_parts, $self->uri_base
-      if defined( $self->uri_base );
-
-    push @path_parts,
-      $self->gallery_uri_path || $self->id;
-
-    push @path_parts, @rest;
-
-    return join '/', @path_parts;
-}
+# sub uri_path {
+#     my ( $self, @rest ) = @_;
+# 
+#     my $uri_base = $self->uri_base;
+#     my @path_parts;
+# 
+#     push @path_parts, $self->uri_base
+#       if defined( $self->uri_base );
+# 
+#     push @path_parts,
+#       $self->gallery_uri_path || $self->id;
+# 
+#     push @path_parts, @rest;
+# 
+#     return join '/', @path_parts;
+# }
 
 sub image_count {
     return shift->store->image_count();

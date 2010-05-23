@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 9;
+use Test::More tests => 11;
 
 use Cwd;
 
@@ -22,7 +22,8 @@ my $gallery1 = new GalleryCat::Gallery(
     id              => 'market2',
     parent          => 'market',
     order           => 0,
-    store_config    => {
+    images_store_module => 'Null',
+    images_store_config => {
         base_path       => $base_path,
     }
 );
@@ -30,7 +31,9 @@ my $gallery1 = new GalleryCat::Gallery(
 my $gallery2 = new GalleryCat::Gallery(
     id              => 'market',
     name            => 'Test Gallery',
-    store_config    => {
+    format          => 'galleries',
+    images_store_module => 'Null',
+    images_store_config => {
         gallery_path    => 'market1',
         base_path       => $base_path,
     }
@@ -41,7 +44,8 @@ my $gallery3 = new GalleryCat::Gallery(
     name            => 'Sub Gallery',
     parent          => 'market',
     order           => 1,
-    store_config    => {
+    images_store_module => 'Null',
+    images_store_config => {
         gallery_path    => 'market-sub',
         base_path       => $base_path,
     }
@@ -51,9 +55,12 @@ is( $gallery1->id, 'market2', 'id' );
 is( $gallery1->name, 'market2', 'default name' );
 is( $gallery2->name, 'Test Gallery', 'explicit name' );
 
-is( ref($gallery1->images_store), 'GalleryCat::Store::Images::File', 'default File store loaded');
-is( ref($gallery1->resizer), 'GalleryCat::Resizer::Resize', 'default Resize resizer loaded');
+is( ref($gallery1->images_store), 'GalleryCat::Store::Images::Null', 'Null Images store loaded');
+#is( ref($gallery1->resizer), 'GalleryCat::Resizer::Resize', 'default Resize resizer loaded');
 
+
+is( $gallery1->format, 'images',    'correct set format');
+is( $gallery2->format, 'galleries', 'correct default format');
 
 # is( $gallery1->image_count,  8, 'count of images' );
 # is( $gallery1->image_count, 11, 'count of images' );

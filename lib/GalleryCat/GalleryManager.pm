@@ -6,11 +6,6 @@ use Carp;
 use GalleryCat::Gallery;
 use Catalyst::Utils;
 
-has 'main_gallery' => (
-    is => 'rw',
-    isa => 'Str',
-);
-
 
 has 'gallery_store_module' => (
     is       => 'ro',
@@ -28,6 +23,7 @@ has 'gallery_store_config' => (
 has 'gallery_store' => (
     is => 'rw',
     isa => 'Object',
+    handles => [ 'main_gallery', 'gallery', 'galleries' ],
 );
 
 
@@ -81,23 +77,22 @@ sub BUILD {
 
     my $store_module = 'GalleryCat::Store::Galleries::' . $self->gallery_store_module;
     eval "require $store_module;";
-    my $store_config = $self->gallery_store_config ;
+    my $store_config = $self->gallery_store_config;
     $self->gallery_store( $store_module->new( $store_config ) );
 
     return $self;
 }
 
-sub galleries {
-    my ( $self, @rest ) = @_;
-    
-    return $self->store->galleries(@rest);
-}
+# sub galleries {
+#     my ( $self, @rest ) = @_;
+#     return $self->store->galleries(@rest);
+# }
 
-sub main_gallery {
-    my ( $self, @rest ) = @_;
-    
-    return $self->store->main_gallery(@rest);
-}
+# sub main_gallery {
+#     my ( $self, @rest ) = @_;
+#     
+#     return $self->store->main_gallery(@rest);
+# }
 
 no Moose;
 
