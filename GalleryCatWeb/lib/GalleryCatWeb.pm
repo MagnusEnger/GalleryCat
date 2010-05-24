@@ -47,6 +47,24 @@ sub redirect {
     $c->detach();
 }
 
+sub uri_for_image {
+    my ( $c, $image ) = @_;
+    
+    if ( $image->uri ) {
+        return $image->uri;
+    }
+    elsif ( my $filepath = $image->file ) {
+        my $apppath  = $c->path_to('root/static');
+        my $unique   = $filepath->relative($apppath);
+        return $c->uri_for_static( $unique );
+    }
+    elsif ( $image->data ) {
+        return $c->uri_for( $c->controller('Gallery')->action_for('image'), [ $image->gallery_id, $image->id ] );
+    }
+    else {
+        return 'ERROR';
+    }
+}
 
 =head1 NAME
 

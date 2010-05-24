@@ -27,53 +27,16 @@ has 'gallery_store' => (
 );
 
 
-
-# has 'image_store_module' => (
-#     is          => 'ro',
-#     isa         => 'Str',
-#     required    => 1,
-#     default     => 'File',
-# );
-# 
-# has 'image_store_config' => (
-#     is          => 'ro',
-#     isa         => 'HashRef',
-# );
-
-
 has 'shared_config' => (
     is          => 'rw',
     isa         => 'HashRef',
     required    => 0,
 );
 
-
-# has 'resizer_module' => (
-#     is       => 'ro',
-#     isa      => 'Str',
-#     required => 1,
-#     default  => 'Resize',
-# );
-# 
-# has 'resizer_config' => (
-#     is       => 'ro',
-#     isa      => 'HashRef',
-# );
-# 
-# has 'resizer' => (
-#     is  => 'rw',
-#     isa => 'Object',
-#     lazy => 1,
-#     default => sub {
-#         my $self = shift;
-#         my $resizer_module = 'GalleryCat::Resizer::' . $self->resizer_module;
-#         eval "require $resizer_module;";
-#         return $self->resizer( $resizer_module->new() );
-#     }
-# );
-
 sub BUILD {
     my $self = shift;
+
+    # TODO: Merge shared config options
 
     my $store_module = 'GalleryCat::Store::Galleries::' . $self->gallery_store_module;
     eval "require $store_module;";
@@ -82,17 +45,6 @@ sub BUILD {
 
     return $self;
 }
-
-# sub galleries {
-#     my ( $self, @rest ) = @_;
-#     return $self->store->galleries(@rest);
-# }
-
-# sub main_gallery {
-#     my ( $self, @rest ) = @_;
-#     
-#     return $self->store->main_gallery(@rest);
-# }
 
 no Moose;
 

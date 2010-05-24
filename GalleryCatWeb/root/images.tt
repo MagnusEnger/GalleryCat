@@ -3,8 +3,8 @@
 
 <style>
 #gallery #navigation .navigation-block {
-    width: [% gallery.thumbnail_max_width || 100 %]px;
-    height: [% gallery.thumbnail_max_height || 100 %]px;
+    width: [% gallery.thumbnail_width || 150 %]px;
+    height: [% gallery.thumbnail_height || 150 %]px;
 </style>
 
 <div id="gallery">

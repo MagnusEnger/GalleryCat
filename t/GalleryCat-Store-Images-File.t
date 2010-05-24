@@ -20,10 +20,6 @@ my $store = new GalleryCat::Store::Images::File({
     path                => $base_path . 'market1/',
     thumbnail_width     => 100,
     thumbnail_height    => 100,
-    uri_builder         => sub {
-        use URI;
-        return URI->new('http://localhost' . shift);
-    },
 });
 
 my $exif_store = new GalleryCat::Store::Images::File({
@@ -56,7 +52,6 @@ is( $images->[1]->id, '2.jpg', 'Correct multiple id 2');
 is( $images->[2]->id, '1.jpg', 'Correct multiple id 3');
 
 isa_ok( $images->[0]->thumbnail, 'GalleryCat::Image', 'thumbnail created' );
-isa_ok( $images->[0]->uri,       'URI',               'URI created' );
 
 $images = $store->images;
 is( $images->[0]->id, '1.jpg', 'Correct all id 1' );

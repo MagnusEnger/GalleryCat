@@ -12,6 +12,10 @@ before 'prepare_arguments' => sub {
 
     # TODO: Merge or perhaps skip if args is already set?
     $self->{args} = $self->{gallery_config};
+    
+    $self->{args}->{uri_builder} = sub {
+        $self->uri_for_static( shift );
+    }
 };
 
 

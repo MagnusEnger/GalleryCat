@@ -100,7 +100,6 @@ sub BUILD {
 
         my $size = $self->get_image_size($file);
         my $info = $self->get_image_info($file);
-        my $uri  = $self->get_image_uri($file);
 
         my $new_file = {
             id          => $filename,
@@ -111,9 +110,6 @@ sub BUILD {
             description => $info->{description},
             keywords    => $info->{keywords},
         };
-        if ( $uri ) {
-            $new_file->{uri} = $uri;
-        }
 
         $images{$filename} = GalleryCat::Image->new($new_file);
         push @ordered, $images{$filename};  # Just order by filename for Memory images
@@ -127,7 +123,7 @@ sub BUILD {
             }
         }
         if ( -e $thumbnail_file ) {
-            my $thumbnail_size = $self->get_image_size($file);
+            my $thumbnail_size = $self->get_image_size($thumbnail_file);
             my $thumbnail = GalleryCat::Image->new({
                 id      => 'thumbnail-' . $filename,
                 file    => $thumbnail_file,
@@ -171,17 +167,6 @@ sub get_image_info {
     return {};
 }
 
-sub get_image_uri {
-    my ( $self, $file ) = @_;
-    
-    my $builder = $self->uri_builder;
-    if ( ref($builder) eq 'CODE' ) {
-        my $uri = &$builder($file);
-        $self->logger->trace('Built URI: ', $uri->as_string);
-        return $uri;
-    }
-    return undef;
-}
 
 sub images_by_id {
     my ( $self, @rest ) = @_;

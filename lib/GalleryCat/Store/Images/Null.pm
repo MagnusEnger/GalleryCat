@@ -5,6 +5,14 @@ use Carp;
 
 extends 'GalleryCat::Store::Images';
 
+sub images {
+    return [];
+}
+
+sub images_count {
+    return 0;
+}
+
 no Moose;
 
 =head1 NAME

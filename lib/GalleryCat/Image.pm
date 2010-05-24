@@ -21,7 +21,7 @@ has uri => (
     coerce      => 1,
 );
 
-has path => (
+has file => (
     is          => 'rw',
     isa         => File,
     coerce      => 1,
@@ -71,64 +71,11 @@ has height => (
 );
 
 
-# sub read_info {
-#     my ( $self ) = @_;
-# 
-#     return;
-#     return if $self->_info_read();
-#     $self->_info_read(1);
-#     
-#     my ( $info, $exif );
-#     
-#     # Try to read the image info from a file or image contents
-# 
-#     if ( my $image_file = $self->gallery->store->image_file($self) ) {
-#         $info = image_info( $image_file->stringify );
-#         if ( $self->gallery->store->read_exif ) {
-#             $exif = ImageInfo( $image_file->stringify );
-#         }
-#     }
-#     elsif ( my $image_data = $self->gallery->store->image_data($self) ) {
-#         $info = image_info( $image_data );
-#         if ( $self->gallery->store->read_exif ) {
-#             $exif = ImageInfo( \$image_data );
-#         }
-#     }
-#     else {
-#         carp("Unable to read image data: " . $self->id);
-#         return;
-#     }
-#     
-#     # Set up the image info
-#     
-#     $self->width( $info->{width} );
-#     $self->height( $info->{height} );
-#     
-#     if ( $exif ) {
-#        $self->title(        $exif->{Title}       || '' ) if !$self->title;
-#        $self->description(  $exif->{Description} || '' ) if !$self->description;
-#        $self->keywords(     $exif->{Keywords}    || '' ) if !$self->keywords;
-#     }
-#     
-# }
 
 
-
-# sub create_thumbnail {
-#     my $self = shift;
-#     
-#     warn('RESIZE');
-#     return;
-#     
-#     my $resizer = $self->gallery->resizer;
-#     my $image = $resizer->resize(
-#         $self->path->stringify,
-#         $self->thumbnail_path->stringify,
-#         $self->gallery->thumbnail_max_width,
-#         $self->gallery->thumbnail_max_height,
-#     );
-# }
-
+sub data {
+    return undef;
+}
 
 no Moose;
 

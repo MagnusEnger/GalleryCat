@@ -38,27 +38,30 @@ sub gallery : Chained('base') PathPart('') Args(1) {
     my $galleries   = $c->stash->{gm}->galleries( $gallery->galleries );    # TODO: Page this?
     my $images      = $gallery->images;     # TODO: Page this?
 
-    # Make sure thumbnails are available
-    # $c->stash->{gallery}->build_thumbnails;
 
-
-    # my @images = map {
-    #     {
-    #         url       => '' . $c->uri_for_static( $_->uri_path ),
-    #         thumbnail => '' . $c->uri_for_static( $_->thumbnail_uri_path ),
-    #         title     => $_->title,
-    #         width     => $_->width,
-    #         height    => $_->height,
-    #     }
-    # } @{$images};
-    # 
-    # $c->stash->{images}      = \@images;
-    # $c->stash->{images_json} = JSON::XS->new->utf8->encode( \@images );
+    my @images = map {
+        {
+            url       => '' . $c->uri_for_image( $_ ),
+            thumbnail => '' . $c->uri_for_image( $_->thumbnail ),
+            title     => $_->title,
+            width     => $_->width,
+            height    => $_->height,
+        }
+    } @{$images};
+    
+    $c->stash->{images}      = \@images;
+    $c->stash->{images_json} = JSON::XS->new->utf8->encode( \@images );
 
     $c->stash->{galleries}   = $galleries;
     $c->stash->{template}    =    $gallery->format eq 'galleries' ? 'galleries.tt'
                                 : $gallery->format eq 'images'    ? 'images.tt'
                                 : 'images.tt';
+}
+
+sub image {
+    my ( $self, $c, $gallery_id, $image_id ) = @_;
+    
+    # TODO: Return image data directly if a URI is not available.
 }
 
 =head1 AUTHOR

@@ -88,13 +88,13 @@ has 'gallery_height' => (
     default => 500,
 );
 
-has 'thumbnail_max_width' => (
+has 'thumbnail_width' => (
     is      => 'ro',
     isa     => 'Int',
     default => 150,
 );
 
-has 'thumbnail_max_height' => (
+has 'thumbnail_height' => (
     is      => 'ro',
     isa     => 'Int',
     default => 150,
@@ -115,12 +115,11 @@ has 'images_store_config' => (
 );
 
 has 'images_store' => (
-    is => 'rw',
-    isa => 'Object',
-    handles => [ qw( images_count ) ],
+    is          => 'rw',
+    isa         => 'Object',
+    handles     => [ qw( images_count ) ],
     
 );
-
 
 
 has 'resizer_module' => (
@@ -165,8 +164,9 @@ sub BUILD {
     eval "require $store_module;";
     my $store_config = $self->images_store_config;
     $store_config->{gallery_id} = $self->id;
+    $store_config->{thumbnail_width} = $self->thumbnail_width;
+    $store_config->{thumbnail_height} = $self->thumbnail_height;
     $self->images_store( $store_module->new( $store_config ) );
-
     return $self;
 }
 
@@ -248,11 +248,11 @@ sub images {
 # }
 
 sub image_count {
-    return shift->store->image_count();
+    return shift->images_store->image_count();
 }
 
 sub images {
-    return shift->store->images(@_);
+    return shift->images_store->images(@_);
 }
 
 no Moose;

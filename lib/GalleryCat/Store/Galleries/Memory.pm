@@ -35,6 +35,7 @@ has '_galleries' => (
     default     => sub {{}},
 );
 
+    
 sub BUILD {
     my $self = shift;
 
@@ -70,8 +71,6 @@ sub BUILD {
     }
     
     $self->_galleries($galleries);
-
-
 
     return $self;
 }

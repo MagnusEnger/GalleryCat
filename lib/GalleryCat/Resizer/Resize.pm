@@ -5,13 +5,13 @@ use Moose;
 has width => (
     is      => 'rw',
     isa     => 'Int',
-    default => 100,
+    default => 150,
 );
 
 has height => (
     is      => 'rw',
     isa     => 'Int',
-    default => 100,
+    default => 150,
 );
 
 # Resize GalleryCat images using Image::Resize

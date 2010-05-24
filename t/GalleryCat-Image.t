@@ -11,13 +11,13 @@ BEGIN { use_ok 'GalleryCat::Image' }
 
 my $test_gallery_dir = '/tmp/galcat_galleries';
 `rm -rf $test_gallery_dir; cp -r t/fixtures/* $test_gallery_dir/`;
-my $base_path = $test_gallery_dir;
+my $base_file = $test_gallery_dir;
 
 # Create an Image 
 
 my $image = new GalleryCat::Image(
     id          => 'market2',
-    path        => "${test_gallery_dir}/galleries/exif/lightroom1.jpg",
+    file        => "${test_gallery_dir}/galleries/exif/lightroom1.jpg",
     uri         => URI->new('http://www.test.com/uri'),
     width       => 200,
     height      => 300,
@@ -30,7 +30,7 @@ isa_ok( $image, 'GalleryCat::Image', 'mocked first image');
 
 my $thumbnail = new GalleryCat::Image(
     id          => 'thumbnail-market2',
-    path        => "${test_gallery_dir}/galleries/exif/thumbnails/lightroom1.jpg",
+    file        => "${test_gallery_dir}/galleries/exif/thumbnails/lightroom1.jpg",
     uri         => 'http://www.test.com/uri/thumbnail',
     width       => 67,
     height      => 100,
