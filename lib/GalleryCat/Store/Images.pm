@@ -13,6 +13,18 @@ has 'gallery_id' => (
     required => 1,
 );
 
+has 'thumbnail_width' => (
+    is          => 'rw',
+    isa         => 'Int',
+    required    => 1,
+);
+
+has 'thumbnail_height' => (
+    is          => 'rw',
+    isa         => 'Int',
+    required    => 1,
+);
+
 
 no Moose;
 

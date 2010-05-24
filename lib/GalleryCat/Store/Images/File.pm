@@ -19,6 +19,16 @@ has 'path' => (
     coerce  => 1,
 );
 
+has '_image_cache' => (
+    is      => 'rw',
+    isa     => 'HashRef',
+);
+
+has '_image_order' => (
+    is      => 'rw',
+    isa     => 'ArrayRef',
+);
+
 has 'thumbnail_dir' => (
     is       => 'ro',
     isa      => 'Str',
@@ -42,36 +52,57 @@ has 'read_exif' => (
     default => 1,
 );
 
+has 'resizer_module' => (
+    is      => 'ro',
+    isa     => 'Str',
+    default => 'Resize',
+);
+
+has 'uri_builder' => (
+    is      => 'ro',
+    isa     => 'CodeRef',
+);
+
 sub BUILD {
     my $self = shift;
     
     # TODO: Make path buildable from a base + id?
 
-    $self->logger->trace( 'Checking for path: ', $self->path->stringify );
-    if ( !-e $self->path ) {
-        croak( 'Path to gallery does not exist: ' . $self->path->stringify );
+    my $path = $self->path;
+
+    $self->logger->trace( 'Checking for path: ', $path->stringify );
+    if ( !-e $path ) {
+        croak( 'Path to gallery does not exist: ' . $path->stringify );
     }
     
-    # Find all images for this file store by reading
-    # all the files in the path.
-    my $dir = $self->path->open();
-    if ( !defined($dir) ) {
-        croak( 'Unable to open directory for reading: ' . $self->path->stringify );
-    }
+    $self->logger->trace('Reading path: ', $path);
+    my ( %images, @ordered );
 
-    $self->logger->trace('Reading path: ', $self->path);
-    my @images;
-    while ( my $filename = $dir->read ) {
+    # Set up thumbnail dir and local resizer. This could be a Role?
+
+    my $thumbnails_dir = $path->subdir( $self->thumbnail_dir );
+    $thumbnails_dir->mkpath();
+    my $resizer_module = 'GalleryCat::Resizer::' . $self->resizer_module;
+    eval "require $resizer_module;";
+    if ( $@ ) {
+        croak("Unable to require resizer module: " . $@ );
+    }
+    my $resizer = $resizer_module->new( width => $self->thumbnail_width, height => $self->thumbnail_height );
+
+    while ( my $file = $path->next ) {
+        next if !-f $file;
+        my $filename = $file->basename;
         next unless $filename =~ / \. (jpe?g|png|gif) $/xsm;
         $self->logger->trace('Found image file: ', $filename);
-        my $file = Path::Class::File->new( $self->path, $filename );
+
         # Read file information. Might want to move this into a Role so it could 
         # be applied to other stores.
 
         my $size = $self->get_image_size($file);
         my $info = $self->get_image_info($file);
+        my $uri  = $self->get_image_uri($file);
 
-        push @images, GalleryCat::Image->new({
+        my $new_file = {
             id          => $filename,
             file        => $file,
             width       => $size->[0],
@@ -79,11 +110,39 @@ sub BUILD {
             title       => $info->{title},
             description => $info->{description},
             keywords    => $info->{keywords},
-        });
+        };
+        if ( $uri ) {
+            $new_file->{uri} = $uri;
+        }
+
+        $images{$filename} = GalleryCat::Image->new($new_file);
+        push @ordered, $images{$filename};  # Just order by filename for Memory images
+        
+        # Build a thumbnail and add it to the image.
+        my $thumbnail_file = $thumbnails_dir->file($filename);
+        if ( !-e $thumbnail_file ) {
+            $self->logger->trace( 'Thumbnail needed: ', $thumbnail_file );
+            if ( $resizer->resize_file( $file, $thumbnail_file ) ) {
+                # Success
+            }
+        }
+        if ( -e $thumbnail_file ) {
+            my $thumbnail_size = $self->get_image_size($file);
+            my $thumbnail = GalleryCat::Image->new({
+                id      => 'thumbnail-' . $filename,
+                file    => $thumbnail_file,
+                width   => $thumbnail_size->[0],
+                height  => $thumbnail_size->[1],
+            });
+            $images{$filename}->thumbnail($thumbnail);
+        }
     }
 
     # TODO: Check for thumbnails and build if necessary
 
+    $self->_image_cache(\%images);
+    $self->_image_order(\@ordered);
+    
     return $self;
 }
 
@@ -102,7 +161,7 @@ sub get_image_info {
     
     my $exif = ImageInfo( $file->stringify );
     if ( $exif ) {
-        my $info = {
+        return {
             title       => $exif->{Title},
             description => $exif->{Description},
             keywords    => $exif->{Keywords},
@@ -112,22 +171,41 @@ sub get_image_info {
     return {};
 }
 
+sub get_image_uri {
+    my ( $self, $file ) = @_;
+    
+    my $builder = $self->uri_builder;
+    if ( ref($builder) eq 'CODE' ) {
+        my $uri = &$builder($file);
+        $self->logger->trace('Built URI: ', $uri->as_string);
+        return $uri;
+    }
+    return undef;
+}
+
 sub images_by_id {
     my ( $self, @rest ) = @_;
+    my @images = map { $self->_image_cache->{$_} } flat @rest;
+    return \@images;
 }
 
 sub images_by_index {
     my ( $self, $start, $end ) = @_;
-    $end ||= $start;
+
+    $start = int($start);
+    $end   = defined($end) ? int($end) : undef;
+    
+    return [ !defined($end) ? @{$self->_image_order}[ $start ] : @{$self->_image_order}[ $start .. $end ] ];
+}
+
+sub image_count {
+    my ( $self ) = @_;
+    return scalar keys %{ $self->_image_cache };
 }
 
 sub images {
     my ($self) = @_;
-
-    my $path = $self->path;
-
-
-    # return \@images;
+    return $self->_image_order;
 }
 
 sub list_thumbnails {

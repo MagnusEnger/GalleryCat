@@ -2,25 +2,51 @@ package GalleryCat::Resizer::Resize;
 
 use Moose;
 
+has width => (
+    is      => 'rw',
+    isa     => 'Int',
+    default => 100,
+);
+
+has height => (
+    is      => 'rw',
+    isa     => 'Int',
+    default => 100,
+);
+
 # Resize GalleryCat images using Image::Resize
 
 use Image::Resize;
 
-sub resize {
+sub resize_file {
     my ( $self, $source, $dest, $width, $height ) = @_;
     
-    my $rs = Image::Resize->new($source);
-    my $gd = $rs->resize( $width, $height );
-    if ( open(FH, ">$dest") ) {
-        print FH $gd->jpeg();
-        close(FH);
-    }
-    else {
-        warn('Unable to open file to write thumbnail to: ' . $dest);
-        return 0;
+    $width  ||= $self->width;
+    $height ||= $self->height;
+    
+    if ( -e $source ) {
+        my $rs = Image::Resize->new($source->stringify);
+        my $gd = $rs->resize( $width, $height );
+
+        # TODO: Do we need to deal with non-JPEG files?
+        if ( open(FH, ">$dest") ) {
+            print FH $gd->jpeg();
+            close(FH);
+        }
+        else {
+            warn('Unable to open file to write thumbnail to: ' . $dest);
+            return 0;
+        }
     }
     
+    
     return 1;
+}
+
+sub resize_data {
+    my $self = shift;
+    warn("Resizing image by image data is not supported by Resizer::Resize");
+    return 0;
 }
 
 no Moose;

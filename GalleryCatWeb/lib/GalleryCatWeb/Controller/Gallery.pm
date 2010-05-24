@@ -36,7 +36,7 @@ sub gallery : Chained('base') PathPart('') Args(1) {
     my $gallery = $c->stash->{gallery} = $c->stash->{gm}->gallery($gallery_id);
 
     my $galleries   = $c->stash->{gm}->galleries( $gallery->galleries );    # TODO: Page this?
-    # my $images      = $gallery->images;     # TODO: Page this?
+    my $images      = $gallery->images;     # TODO: Page this?
 
     # Make sure thumbnails are available
     # $c->stash->{gallery}->build_thumbnails;
