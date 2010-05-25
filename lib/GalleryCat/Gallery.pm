@@ -76,16 +76,31 @@ has 'gallery_uri_path' => (
 );
 
 
+has 'gallery_height' => (
+    is      => 'ro',
+    isa     => 'Str',
+    lazy    => 1,
+    builder => 'max_image_height',
+);
+
+has 'gallery_image_width' => (
+    is      => 'ro',
+    isa     => 'Str',
+    lazy    => 1,
+    builder => 'max_image_width',
+);
+
+has 'gallery_info_width' => (
+    is      => 'ro',
+    isa     => 'Str',
+    default => 200,
+);
+
+
 has 'thumbnails_per_page' => (
     is      => 'ro',
     isa     => 'Int',
     default => 5,
-);
-
-has 'gallery_height' => (
-    is      => 'ro',
-    isa     => 'Str',
-    default => 500,
 );
 
 has 'thumbnail_width' => (
@@ -117,35 +132,9 @@ has 'images_store_config' => (
 has 'images_store' => (
     is          => 'rw',
     isa         => 'Object',
-    handles     => [ qw( images_count ) ],
+    handles     => [ qw( images_count max_image_width max_image_height ) ],
     
 );
-
-
-has 'resizer_module' => (
-    is       => 'ro',
-    isa      => 'Str',
-    required => 1,
-    default  => 'Resize',
-);
-
-has 'resizer_config' => (
-    is       => 'ro',
-    isa      => 'HashRef',
-);
-
-has 'resizer' => (
-    is  => 'rw',
-    isa => 'Object',
-    lazy => 1,
-    default => sub {
-        my $self = shift;
-        my $resizer_module = 'GalleryCat::Resizer::' . $self->resizer_module;
-        eval "require $resizer_module;";
-        return $self->resizer( $resizer_module->new() );
-    }
-);
-
 
 has 'cover_index' => (
     is      => 'rw',
@@ -193,59 +182,6 @@ sub images {
     return $images;
 }
 
-# sub build_thumbnails {
-#     my ($self) = @_;
-# 
-#     my %thumbnail_map = map { $_ => 1 } @{ $self->list_thumbnails };
-# 
-#     return $self->store->build_thumbnails;
-# }
-# 
-# sub list_thumbnails {
-#     my ( $self ) = @_;
-#     
-#     return $self->store->list_thumbnails;
-# }
-# 
-# sub path {
-#     return shift->store->path(@_);
-# }
-# 
-# sub thumbnail_path {
-#     return shift->store->thumbnail_path(@_);
-# }
-# 
-# sub thumbnail_uri_path {
-#     my $self = shift;
-#     return $self->uri_path( $self->thumbnail_dir, @_ );
-# }
-# 
-# sub image_uri {
-#     my ( $self, @rest ) = @_;
-#     return $self->store->image_uri( @rest );
-# }
-# 
-# sub thumbnail_uri {
-#     my ( $self, @rest ) = @_;
-#     return $self->store->thumbnail_uri( @rest );
-# }
-
-# sub uri_path {
-#     my ( $self, @rest ) = @_;
-# 
-#     my $uri_base = $self->uri_base;
-#     my @path_parts;
-# 
-#     push @path_parts, $self->uri_base
-#       if defined( $self->uri_base );
-# 
-#     push @path_parts,
-#       $self->gallery_uri_path || $self->id;
-# 
-#     push @path_parts, @rest;
-# 
-#     return join '/', @path_parts;
-# }
 
 sub image_count {
     return shift->images_store->image_count();

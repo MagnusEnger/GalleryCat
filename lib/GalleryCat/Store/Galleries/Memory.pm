@@ -93,7 +93,7 @@ sub galleries {
     # TODO: Should we do something special if passed an arrayref? For now just flatten.
 
     # Retrieve galleries by ID
-    my @galleries = map { $self->_galleries->{$_} } flat @rest;
+    my @galleries = map { $self->_galleries->{$_} } grep { defined($_) } flat @rest;
     return \@galleries;
 }
 

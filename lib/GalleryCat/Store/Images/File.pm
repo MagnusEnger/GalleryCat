@@ -7,6 +7,7 @@ use IO::Dir;
 use Path::Class;
 use File::Slurp qw();
 use List::Flatten qw(flat);
+use List::Util qw(max);
 
 use Image::Size;
 use Image::ExifTool qw(ImageInfo);
@@ -36,16 +37,6 @@ has 'thumbnail_dir' => (
     default  => 'thumbnails',
 );
 
-has 'uri_base' => (
-    is => 'rw',
-    isa => 'Str'
-);
-
-has 'uri_part' => (
-    is  => 'rw',
-    isa => 'Str',
-);
-
 has 'read_exif' => (
     is => 'ro',
     required => 1,
@@ -56,11 +47,6 @@ has 'resizer_module' => (
     is      => 'ro',
     isa     => 'Str',
     default => 'Resize',
-);
-
-has 'uri_builder' => (
-    is      => 'ro',
-    isa     => 'CodeRef',
 );
 
 sub BUILD {
@@ -85,7 +71,7 @@ sub BUILD {
     my $resizer_module = 'GalleryCat::Resizer::' . $self->resizer_module;
     eval "require $resizer_module;";
     if ( $@ ) {
-        croak("Unable to require resizer module: " . $@ );
+        croak( "Unable to require resizer module: " . $@ );
     }
     my $resizer = $resizer_module->new( width => $self->thumbnail_width, height => $self->thumbnail_height );
 
@@ -106,7 +92,7 @@ sub BUILD {
             file        => $file,
             width       => $size->[0],
             height      => $size->[1],
-            title       => $info->{title},
+            title       => $info->{title} || $filename,
             description => $info->{description},
             keywords    => $info->{keywords},
         };
@@ -193,58 +179,6 @@ sub images {
     return $self->_image_order;
 }
 
-sub list_thumbnails {
-    my ($self) = @_;
-
-    my $thumbnail_path = $self->thumbnail_path;
-
-    # Find existing thumbnails
-    my @thumbnails;
-    my $dir = $thumbnail_path->open();
-    while ( my $file = $dir->read ) {
-        next unless $file =~ / \. (jpe?g|png|gif) $/xsm;
-        push @thumbnails, $file;
-    }
-
-    return \@thumbnails;
-}
-
-sub save_thumbnail {
-    my ($self) = @_;
-
-    my $images         = $self->images;
-    my $path           = $self->path;
-    my $thumbnail_path = $self->thumbnail_path;
-
-    # Create thumbnail path if it doesn't exist
-    if ( !-e $thumbnail_path ) {
-        mkdir($thumbnail_path);
-    }
-
-    my %thumbnail_map = map { $_ => 1 } @{ $self->list_thumbnails };
-
-    # Create any thumbnails that don't exist
-    my $build_count = 0;
-    my $max_x       = $self->thumbnail_max_width;
-    my $max_y       = $self->thumbnail_max_height;
-    chdir( $self->path );
-    foreach my $image (@$images) {
-        my $file = $image->file;
-        warn("Checking image: $file\n");
-        if ( !exists $thumbnail_map{$file} ) {
-            warn("Creating thumbnail for: $file\n");
-
-# warn( "Mogrify: gm mogrify -output-directory thumbnails -quality 95 -resize ${max_x}x${max_y} $file\n" );
-# `gm mogrify -output-directory thumbnails -quality 95 -resize ${max_x}x${max_y} $file`;
-            if ( $image->create_thumbnail() ) {
-                $build_count++;
-            }
-        }
-    }
-
-    return $build_count;
-}
-
 sub image_file {
     my ( $self, $image ) = @_;
     return $self->path( $image->id );
@@ -257,46 +191,16 @@ sub image_data {
     return \$data;
 }
 
-# sub path {
-#     my ( $self, @rest ) = @_;
-#     return Path::Class::dir( $self->base_path, $self->gallery_path || $self->gallery->id, @rest );
-# }
-# 
-# sub thumbnail_path {
-#     my $self = shift;
-#     return $self->path( $self->thumbnail_dir, @_ );
-# }
-# 
-# sub thumbnail_uri_path {
-#     my $self = shift;
-#     return $self->uri_path( $self->thumbnail_dir, @_ );
-# }
-# 
-# sub image_uri {
-#     my ( $self, $image ) = @_;
-#     return $self->_uri( $image->id );
-# }
-# 
-# sub thumbnail_uri {
-#     my ( $self, $image ) = @_;
-#     return $self->_uri( $self->thumbnail_dir, $image->id );
-# }
-# 
-# sub _uri {
-#     my ( $self, @rest ) = @_;
-# 
-#     my @path_parts;
-# 
-#     push @path_parts, $self->uri_base
-#       if defined( $self->uri_base );
-# 
-#     push @path_parts,
-#       $self->gallery_uri_part || $self->gallery_path || $self->gallery->id;
-# 
-#     push @path_parts, @rest;
-# 
-#     return join '/', @path_parts;
-# }
+sub max_image_width {
+    return max map { $_->width } @{shift->_image_order};
+}
+
+sub max_image_height {
+    return max map { $_->height } @{shift->_image_order};
+}
+
+
+
 
 no Moose;
 

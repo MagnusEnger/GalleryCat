@@ -5,18 +5,37 @@
 #gallery #navigation .navigation-block {
     width: [% gallery.thumbnail_width || 150 %]px;
     height: [% gallery.thumbnail_height || 150 %]px;
+}
+
+.gallery-height {
+    height: [% gallery_height %]px;
+}
+
+#gallery #image {
+    width: [% gallery.gallery_image_width || 500 %]px;
+}
+
+#gallery #image-info {
+    width: [% gallery.gallery_info_width || 200 %]px;
+}
+
+
 </style>
 
 <div id="gallery">
  <div id="info">
   <div id="gallery-name">[% gallery.name | html %]</div>
-  <div id="image-title">[% images.first.title | html %]</div>
   <div style="clear: both;"></div>
  </div>
- <div id="main" style="height: [% gallery_height %]px;">    
-  <div id="previous-image" style="height: [% gallery_height %]px;"><a href="#" style="display: none;"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uri_for_static('images/icons/previous.png') %]" alt="previous image" /></a></div>
-  <div id="next-image" style="height: [% gallery_height %]px;"><a href="#"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uri_for_static('images/icons/next.png') %]" alt="next image" /></a></div>
-  <div id="image" style="height: [% gallery_height %]px;"><div id="image-container"><img [% IF images.first.height > gallery_height %]height="[% gallery_height %]"[% END %] src="[% images.first.url %]" /></div></div>
+ <div id="main" class="gallery-height">    
+  <div id="previous-image" class="gallery-height"><a href="#" style="display: none;"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uri_for_static('images/icons/previous.png') %]" alt="previous image" /></a></div>
+  <div id="image" class="gallery-height"><div id="image-container"><img [% IF images.first.height > gallery_height %]height="[% gallery_height %]"[% END %] src="[% images.first.url %]" /></div></div>
+  <div id="image-info" class="gallery-height">
+   <div id="image-title">[% images.first.title | html %]</div>
+   <div id="image-description">[% images.first.description | html %]</div>
+   <div id="image-keywords">[% images.first.keywords | html %]</div>
+  </div>
+  <div id="next-image" class="gallery-height"><a href="#"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uri_for_static('images/icons/next.png') %]" alt="next image" /></a></div>
  </div>
  <div id="navigation"><div id="navigation-container">
   <div id="first-page" class="button"><a href="#" style="display: none;"><img class="button" src="[% c.uri_for_static('images/icons/first.png') %]" alt="first page" /></a></div>
