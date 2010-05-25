@@ -167,13 +167,12 @@ body {
 
 #gallery #navigation-blocks .page {
     height: 160px;
-
     float: left;
     position: absolute;
 }
 
 #gallery #navigation-blocks {
-    position: absolute;
+/*    position: absolute;*/
 }
 
 
