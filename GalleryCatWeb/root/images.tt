@@ -18,8 +18,6 @@
 #gallery #image-info {
     width: [% gallery.gallery_info_width || 200 %]px;
 }
-
-
 </style>
 
 <div id="gallery">

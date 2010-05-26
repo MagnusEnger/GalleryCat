@@ -171,15 +171,18 @@ sub cover {
 }
 
 sub images {
-    my ($self) = @_;
+    my ($self, @rest) = @_;
+    return $self->images_store->images(@rest);
+}
 
-    return $self->{cache}->{images} if exists $self->{cache}->{images};
+sub images_by_index {
+    my ($self, @rest) = @_;
+    return $self->images_store->images_by_index(@rest);
+}
 
-    my $images = $self->store->images;
-
-    $self->{cache}->{images} = $images;
-
-    return $images;
+sub images_by_id {
+    my ($self, @rest) = @_;
+    return $self->images_store->images_by_id(@rest);
 }
 
 
@@ -187,9 +190,6 @@ sub image_count {
     return shift->images_store->image_count();
 }
 
-sub images {
-    return shift->images_store->images(@_);
-}
 
 no Moose;
 
