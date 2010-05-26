@@ -193,6 +193,7 @@ var GalCat = function() {
 
             old_page_block
                 .removeClass('active')
+                .addClass('fading')
                 .animate({opacity: 0.0}, private.fade_speed, 'linear', function() {
                     jQuery(this).remove();
                 });
