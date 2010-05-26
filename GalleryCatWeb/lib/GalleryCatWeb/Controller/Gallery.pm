@@ -76,11 +76,14 @@ sub image {
 sub _image_to_hash {
     my ( $self, $c, $image ) = @_;
     return {
-        url       => '' . $c->uri_for_image( $image ),
-        thumbnail => '' . $c->uri_for_image( $image->thumbnail ),
-        title     => $image->title,
-        width     => $image->width,
-        height    => $image->height,
+        id          => $image->id,
+        url         => '' . $c->uri_for_image( $image ),
+        thumbnail   => '' . $c->uri_for_image( $image->thumbnail ),
+        title       => $image->title,
+        description => $image->description,
+        keywords    => $image->keywords,
+        width       => $image->width,
+        height      => $image->height,
     };
 }
 

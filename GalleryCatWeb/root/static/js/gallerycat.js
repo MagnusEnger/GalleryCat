@@ -18,18 +18,18 @@ var GalCat = function() {
         //
         //
 
-        activateImage: function( image_id ) {
+        activateImage: function( image_index ) {
 
-            image_id = parseInt(image_id);  // Fixes odd issue where image_id is sometimes treated as a string
+            image_index = parseInt(image_index);  // Fixes odd issue where image_index is sometimes treated as a string
 
             // Bounds checking, and avoid changing to the current page
-            if ( image_id < 0 ) {
-                image_id = 0;
+            if ( image_index < 0 ) {
+                image_index = 0;
             }
-            if ( image_id > public.images.length-1 ) {
-                image_id = public.images.length-1;
+            if ( image_index > public.images.length-1 ) {
+                image_index = public.images.length-1;
             }
-            if ( image_id == private.current_image ) {
+            if ( image_index == private.current_image ) {
                 return false;
             }
             
@@ -43,7 +43,7 @@ var GalCat = function() {
             var image_container = $('#gallery #image-container');
 
             // Calculate the image height by clamping it at the container height
-            var image = public.images[image_id];
+            var image = public.images[image_index];
             var height = image.height > image_div.innerHeight() ? image_div.innerHeight() : image.height;
 
             // If the image is going to be resized, we need to recalculate its width to center it
@@ -64,10 +64,15 @@ var GalCat = function() {
                 .animate({opacity: 1.0}, private.fade_speed, 'linear');
 
             // The image information (title, description, etc.)
-            $('#gallery #info #image-title').html(image.title);  // TODO: Title needs HTML escaping?
+            $('#gallery #image-info #image-title').html(image.title);  // TODO: Needs HTML escaping?
+            $('#gallery #image-info #image-description').html(image.description);  // TODO: Needs HTML escaping?
+            $('#gallery #image-info #image-keywords').html(image.keywords);  // TODO: Needs HTML escaping?
+
+            // Set a hash tag so we could potentially bookmark this image
+            window.location.hash = image.id; // TODO: URI encode?
 
             // Set the current image if we've come this far
-             private.current_image = image_id;
+             private.current_image = image_index;
 
             // Show and hide relevant controls
             this.updateImageNavigationControls();
@@ -79,8 +84,8 @@ var GalCat = function() {
             this.highlightNavigation();
 
             // Preload previous/next images
-            if ( image_id > 0 ) { this.preload( image_id-1 ); }
-            if ( image_id < (this.images.length-1) ) { this.preload( image_id+1 ); }
+            if ( image_index > 0 ) { this.preload( image_index-1 ); }
+            if ( image_index < (this.images.length-1) ) { this.preload( image_index+1 ); }
 
             return this;
         },
@@ -103,8 +108,8 @@ var GalCat = function() {
             return this.imageOnPage(private.current_image, private.current_page);
         },
         
-        imageOnPage: function( image_id, page ) {
-            return page == parseInt(image_id / public.thumbnails_per_page);
+        imageOnPage: function( image_index, page ) {
+            return page == parseInt(image_index / public.thumbnails_per_page);
         },
 
         oppositeDir: function(dir) {
@@ -116,8 +121,8 @@ var GalCat = function() {
         },
 
         // Create a hidden image DOM object that self-destructs on load or error
-        preload: function(image_id) {
-            var image = public.images[image_id];
+        preload: function(image_index) {
+            var image = public.images[image_index];
             if ( typeof(image) == 'undefined' || image.preloaded ) {
                 return;
             }
@@ -145,7 +150,7 @@ var GalCat = function() {
 
             // Create a new page and fill in the thumbnails
 
-            var image_id = new_page * this.thumbnails_per_page;
+            var image_index = new_page * this.thumbnails_per_page;
             
             var page_block = $('<div />')
                 .css({
@@ -156,7 +161,7 @@ var GalCat = function() {
 
             for ( var x=0; x<this.thumbnails_per_page; x++ ) {
 
-                var image = this.images[image_id];
+                var image = this.images[image_index];
 
                 if ( typeof(image) != 'undefined' ) {
                     var block = $('<div />')
@@ -164,7 +169,7 @@ var GalCat = function() {
                     
                     var link = $('<a />')
                         .attr('href', '#')
-                        .attr('imgid', image_id)
+                        .attr('imgid', image_index)
                         .bind('click', GalCat.thumbnailClick)
                         .appendTo(block);
                 
@@ -174,7 +179,7 @@ var GalCat = function() {
                     
                     block.appendTo(page_block);
                 
-                    image_id++;
+                    image_index++;
                 }
 
             }
@@ -266,9 +271,9 @@ var GalCat = function() {
         
         // jQuery event, clicked on a thumbnail
         thumbnailClick: function(e) {
-            var image_id = $(this).attr('imgid');
-            if ( private.current_image != image_id ) {
-                public.activateImage( image_id );
+            var image_index = $(this).attr('imgid');
+            if ( private.current_image != image_index ) {
+                public.activateImage( image_index );
             }
             return false;
         },
@@ -313,11 +318,3 @@ var GalCat = function() {
     
     return public;
 }();
-
-
-
-
-
- 
-
-
