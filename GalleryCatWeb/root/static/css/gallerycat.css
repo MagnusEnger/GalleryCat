@@ -172,6 +172,10 @@ body {
     position: absolute;
 }
 
+#gallery #navigation-blocks {
+/*    position: absolute;*/
+}
+
 #gallery #navigation-container {
     float: left;
 }
