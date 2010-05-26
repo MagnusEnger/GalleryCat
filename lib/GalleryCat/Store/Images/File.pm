@@ -8,6 +8,7 @@ use Path::Class;
 use File::Slurp qw();
 use List::Flatten qw(flat);
 use List::Util qw(max);
+use String::Util qw(hascontent trim);
 
 use Image::Size;
 use Image::ExifTool qw(ImageInfo);
@@ -28,6 +29,11 @@ has '_image_cache' => (
 has '_image_order' => (
     is      => 'rw',
     isa     => 'ArrayRef',
+);
+
+has '_keywords' => (
+    is      => 'rw',
+    isa     => 'HashRef',
 );
 
 has 'thumbnail_dir' => (
@@ -75,6 +81,7 @@ sub BUILD {
     }
     my $resizer = $resizer_module->new( width => $self->thumbnail_width, height => $self->thumbnail_height );
 
+    my %keywords;
     while ( my $file = $path->next ) {
         next if !-f $file;
         my $filename = $file->basename;
@@ -100,6 +107,15 @@ sub BUILD {
         $images{$filename} = GalleryCat::Image->new($new_file);
         push @ordered, $images{$filename};  # Just order by filename for Memory images
 
+        # Update keyword index
+        if ( hascontent($new_file->{keywords}) ) {
+            foreach my $keyword ( split /\s*,\s*/, $new_file->{keywords} ) {
+                $keyword = $self->clean_keyword($keyword);
+                $keywords{$keyword} = [] if !exists $keywords{$keyword};
+                push @{$keywords{$keyword}}, $images{$filename};
+            }
+        }
+
         # Build a thumbnail and add it to the image.
         my $thumbnail_file = $thumbnails_dir->file($filename);
         if ( !-e $thumbnail_file ) {
@@ -122,6 +138,7 @@ sub BUILD {
 
     # TODO: Check for thumbnails and build if necessary
 
+    $self->_keywords(\%keywords);
     $self->_image_cache(\%images);
     $self->_image_order(\@ordered);
 
@@ -169,6 +186,30 @@ sub images_by_index {
     return [ !defined($end) ? @{$self->_image_order}[ $start ] : @{$self->_image_order}[ $start .. $end ] ];
 }
 
+sub images_by_keyword {
+    my ( $self, $keyword, $start, $end ) = @_;
+
+    $keyword    = $self->clean_keyword($keyword);
+    $start      = int($start) if defined($start);
+    $end        = int($end)   if defined($end);
+
+    my $images = $self->_keywords->{$keyword} || [];
+
+    if ( defined($start) ) {
+        if ( defined($end) ) {
+            return @{$images}[ $start .. $end ];
+        }
+        return @{$images}[$start]
+    }
+    return $images;
+}
+
+sub clean_keyword {
+    my ( $self, $keyword ) = @_;
+    $keyword = trim(lc($keyword));
+    return $keyword;
+}
+
 sub image_count {
     my ( $self ) = @_;
     return scalar keys %{ $self->_image_cache };
@@ -179,18 +220,6 @@ sub images {
     return $self->_image_order;
 }
 
-sub image_file {
-    my ( $self, $image ) = @_;
-    return $self->path( $image->id );
-}
-
-sub image_data {
-    my ( $self, $image ) = @_;
-    my $file = $self->image_file( $image )->stringify;
-    my $data = File::Slurp::read_file($file);
-    return \$data;
-}
-
 sub max_image_width {
     return max map { $_->width } @{shift->_image_order};
 }
@@ -198,7 +227,6 @@ sub max_image_width {
 sub max_image_height {
     return max map { $_->height } @{shift->_image_order};
 }
-
 
 
 

@@ -58,13 +58,18 @@ is( $images->[0]->id, '1.jpg', 'Correct all id 1' );
 is( $images->[10]->id, '9.jpg', 'Correct all id 11' );
 
 # Check extended data from EXIF
+# TODO: Add more images for better keyword testing
 
-my $exif_image = $exif_store->images_by_index(0)->[0];
+my $exif_image = $exif_store->images_by_id('lightroom1.jpg')->[0];
 is( $exif_image->title,       'Test Title', 'image title from EXIF' );
 is( $exif_image->description, 'Test Description', 'image description from EXIF' );
 is( $exif_image->keywords,    'keywords, multiple word keyword, test', 'image keywords from EXIF' );
 
+my $keyword_images = $exif_store->images_by_keyword('test');
+is( scalar(@$keyword_images), 2, 'two keyword images returned' );
 
+$keyword_images = $exif_store->images_by_keyword('exiftool');
+is( $keyword_images->[0]->id, 'exiftool1.jpg', 'correct image returned');
 
 #
 # my $internal_galleries = $store->_galleries;
