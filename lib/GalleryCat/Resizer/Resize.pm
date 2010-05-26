@@ -20,10 +20,10 @@ use Image::Resize;
 
 sub resize_file {
     my ( $self, $source, $dest, $width, $height ) = @_;
-    
+
     $width  ||= $self->width;
     $height ||= $self->height;
-    
+
     if ( -e $source ) {
         my $rs = Image::Resize->new($source->stringify);
         my $gd = $rs->resize( $width, $height );
@@ -38,8 +38,8 @@ sub resize_file {
             return 0;
         }
     }
-    
-    
+
+
     return 1;
 }
 

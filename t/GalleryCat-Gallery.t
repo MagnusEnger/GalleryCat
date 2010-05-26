@@ -4,7 +4,7 @@ use Test::More tests => 11;
 
 use Cwd;
 
-BEGIN { 
+BEGIN {
     use_ok 'GalleryCat::Gallery'
 }
 
@@ -74,5 +74,5 @@ is( $gallery2->format, 'galleries', 'correct default format');
 # my $bad_gallery = GalleryCat::Gallery->new(
 #     id => 'foobar',
 # );
-#     
+#
 # is( $bad_gallery, undef, 'do not create a gallery if the path is bad' );

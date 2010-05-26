@@ -5,7 +5,7 @@ use Test::More tests => 16;
 use Cwd;
 use lib 't/lib';
 
-BEGIN { 
+BEGIN {
     use_ok('GalleryCat::Store::Galleries::Memory');
 }
 

@@ -4,7 +4,7 @@ use Test::More tests => 3;
 
 use Cwd;
 
-BEGIN { 
+BEGIN {
     use_ok('GalleryCat::Logger::Default');
 }
 

@@ -133,7 +133,7 @@ has 'images_store' => (
     is          => 'rw',
     isa         => 'Object',
     handles     => [ qw( images_count max_image_width max_image_height ) ],
-    
+
 );
 
 has 'cover_index' => (

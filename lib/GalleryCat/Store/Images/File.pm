@@ -51,7 +51,7 @@ has 'resizer_module' => (
 
 sub BUILD {
     my $self = shift;
-    
+
     # TODO: Make path buildable from a base + id?
 
     my $path = $self->path;
@@ -60,7 +60,7 @@ sub BUILD {
     if ( !-e $path ) {
         croak( 'Path to gallery does not exist: ' . $path->stringify );
     }
-    
+
     $self->logger->trace('Reading path: ', $path);
     my ( %images, @ordered );
 
@@ -81,7 +81,7 @@ sub BUILD {
         next unless $filename =~ / \. (jpe?g|png|gif) $/xsm;
         $self->logger->trace('Found image file: ', $filename);
 
-        # Read file information. Might want to move this into a Role so it could 
+        # Read file information. Might want to move this into a Role so it could
         # be applied to other stores.
 
         my $size = $self->get_image_size($file);
@@ -99,7 +99,7 @@ sub BUILD {
 
         $images{$filename} = GalleryCat::Image->new($new_file);
         push @ordered, $images{$filename};  # Just order by filename for Memory images
-        
+
         # Build a thumbnail and add it to the image.
         my $thumbnail_file = $thumbnails_dir->file($filename);
         if ( !-e $thumbnail_file ) {
@@ -124,7 +124,7 @@ sub BUILD {
 
     $self->_image_cache(\%images);
     $self->_image_order(\@ordered);
-    
+
     return $self;
 }
 
@@ -132,7 +132,7 @@ sub BUILD {
 sub get_image_size {
     my ( $self, $file ) = @_;
     my ( $width, $height ) = imgsize($file->stringify);
-    
+
     $self->logger->trace("Read image size: $width x $height");
     return [ $width, $height ];
 }
@@ -140,7 +140,7 @@ sub get_image_size {
 # Turn this into a Role for Stores that have local access to the file.
 sub get_image_info {
     my ( $self, $file ) = @_;
-    
+
     my $exif = ImageInfo( $file->stringify );
     if ( $exif ) {
         return {
@@ -165,7 +165,7 @@ sub images_by_index {
 
     $start = int($start);
     $end   = defined($end) ? int($end) : undef;
-    
+
     return [ !defined($end) ? @{$self->_image_order}[ $start ] : @{$self->_image_order}[ $start .. $end ] ];
 }
 

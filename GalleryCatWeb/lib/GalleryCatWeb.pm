@@ -49,7 +49,7 @@ sub redirect {
 
 sub uri_for_image {
     my ( $c, $image ) = @_;
-    
+
     if ( $image->uri ) {
         return $image->uri;
     }

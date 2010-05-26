@@ -4,7 +4,7 @@ use Test::More tests => 3;
 
 use Cwd;
 
-BEGIN { 
+BEGIN {
     use_ok 'GalleryCat::GalleryManager';
 }
 
@@ -22,8 +22,8 @@ my $gallery_manager = new GalleryCat::GalleryManager(
             },
         },
     },
-    
-    
+
+
     # image_store_module => '',
     # image_store_config => {},
 );

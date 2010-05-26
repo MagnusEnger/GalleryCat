@@ -46,7 +46,7 @@ sub gallery : Chained('load_gallery') PathPart('') Args(0) {
 
 
     my @images = map { $self->_image_to_hash( $c, $_ ) } @$images;
-    
+
     $c->stash->{images}      = \@images;
     $c->stash->{images_json} = JSON::XS->new->utf8->encode( \@images );
 
@@ -58,18 +58,18 @@ sub gallery : Chained('load_gallery') PathPart('') Args(0) {
 
 sub images_json : Chained('load_gallery') PathPart('images_json') Args(2) {
     my ( $self, $c, $start, $end ) = @_;
-    
+
     my $gallery = $c->stash->{gallery};
-    
+
     my @images = map { $self->_image_to_hash( $c, $_ ) } @{ $gallery->images_by_index( $start, $end ) };
-    
+
     $c->stash->{json}->{images} = \@images;
     $c->stash->{current_view} = 'JSON';
 }
 
 sub image {
     my ( $self, $c, $gallery_id, $image_id ) = @_;
-    
+
     # TODO: Return image data directly if a URI is not available.
 }
 

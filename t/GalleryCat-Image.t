@@ -13,7 +13,7 @@ my $test_gallery_dir = '/tmp/galcat_galleries';
 `rm -rf $test_gallery_dir; cp -r t/fixtures/* $test_gallery_dir/`;
 my $base_file = $test_gallery_dir;
 
-# Create an Image 
+# Create an Image
 
 my $image = new GalleryCat::Image(
     id          => 'market2',

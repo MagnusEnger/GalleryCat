@@ -35,13 +35,13 @@ has '_galleries' => (
     default     => sub {{}},
 );
 
-    
+
 sub BUILD {
     my $self = shift;
 
     my $shared_config = $self->shared_config();
     my $galleries = $self->_galleries();
-    
+
     # Create Gallery objects for all configured galleries
     while ( my ( $id, $config ) = each( %{ $self->galleries_config() } ) ) {
 
@@ -59,17 +59,17 @@ sub BUILD {
     }
 
     # Set up parent/child relationships
-    
+
     my @gallery_list = values(%$galleries);
     foreach my $gallery ( @gallery_list ) {
-        my @kids = map { $_->id } 
+        my @kids = map { $_->id }
                     sort { $a->order <=> $b->order }
-                    grep { defined($_->parent) && $_->parent eq $gallery->id } 
+                    grep { defined($_->parent) && $_->parent eq $gallery->id }
                     @gallery_list;
 
         $gallery->galleries( \@kids ) if scalar(@kids);
     }
-    
+
     $self->_galleries($galleries);
 
     return $self;
@@ -110,7 +110,7 @@ GalleryCat::Store::Image::File - Moose class for handling Galleries in memory.
 
 =head1 DESCRIPTION
 
-This is the most basic storage for galleries.  It uses the passed in configuration to 
+This is the most basic storage for galleries.  It uses the passed in configuration to
 set them all up in memory.  It could be subclassed to read the configuration data from
 somewhere else like an external file.  Larger installs should probably use a database store.
 
