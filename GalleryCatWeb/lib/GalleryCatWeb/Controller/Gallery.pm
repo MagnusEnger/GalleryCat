@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use parent 'Catalyst::Controller';
 
+use String::Util qw(hascontent);
+
 =head1 NAME
 
 GalleryCatWeb::Controller::Gallery - Catalyst Controller
@@ -42,8 +44,18 @@ sub gallery : Chained('load_gallery') PathPart('') Args(0) {
 
     my $gallery     = $c->stash->{gallery};
     my $galleries   = $c->stash->{gm}->galleries( $gallery->galleries );    # TODO: Page this?
-    my $images      = $gallery->images;     # TODO: Page this?
 
+    my $keyword     = $c->req->params->{keyword};
+    my $start       = $c->req->params->{start};
+    my $end         = $c->req->params->{end};
+
+    my $images = [];
+    if ( hascontent($keyword) ) {
+        $images = $gallery->images_by_keyword($keyword, $start, $end);
+    }
+    else {
+        $images = $gallery->images;     # TODO: Page this?
+    }
 
     my @images = map { $self->_image_to_hash( $c, $_ ) } @$images;
 

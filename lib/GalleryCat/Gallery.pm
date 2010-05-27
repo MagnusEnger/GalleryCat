@@ -185,6 +185,11 @@ sub images_by_id {
     return $self->images_store->images_by_id(@rest);
 }
 
+sub images_by_keyword {
+    my ($self, @rest) = @_;
+    return $self->images_store->images_by_keyword(@rest);
+}
+
 
 sub image_count {
     return shift->images_store->image_count();
