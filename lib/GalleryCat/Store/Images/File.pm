@@ -228,6 +228,15 @@ sub max_image_height {
     return max map { $_->height } @{shift->_image_order};
 }
 
+sub keywords {
+    my ( $self, $limit ) = @_;
+    
+    my @keywords = keys %{ $self->_keywords };
+    if ( hascontent($limit) ) {
+        return [ grep { /$limit/ } @keywords ];
+    }
+    return \@keywords;
+}
 
 
 no Moose;
