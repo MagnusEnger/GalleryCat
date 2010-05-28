@@ -76,7 +76,7 @@ body {
 }
 
 #gallery #keyword-search {
-    border: 1px solid #999;
+    border: none;
     width: 200px;
 }
 
@@ -99,8 +99,6 @@ body {
     margin-top: 10px;
 }
 
-
-
 #gallery #info {
     margin: 3px 0;
 }
@@ -112,7 +110,6 @@ body {
 #gallery #image-info {
     float: left;
 }
-
 
 #gallery #image img {
     display: block;

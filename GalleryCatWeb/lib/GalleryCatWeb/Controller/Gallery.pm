@@ -70,6 +70,10 @@ sub gallery : Chained('load_gallery') PathPart('') Args(0) {
 
     my @images = map { $self->_image_to_hash( $c, $_ ) } @$images;
 
+    $c->stash->{keyword}     = $c->req->params->{keyword};  # TODO: untaint this
+    $c->stash->{start}       = int($c->req->params->{start});
+    $c->stash->{end}         = int($c->req->params->{end});
+
     $c->stash->{images}      = \@images;
     $c->stash->{images_json} = JSON::XS->new->utf8->encode( \@images );
 
