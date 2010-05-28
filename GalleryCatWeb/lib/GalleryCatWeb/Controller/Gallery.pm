@@ -39,6 +39,15 @@ sub load_gallery : Chained('base') PathPart('') CaptureArgs(1) {
     $c->stash->{gallery} = $c->stash->{gm}->gallery($gallery_id);
 }
 
+=head2 ajaxgallery
+
+Loads a gallery and its images.  These are passed to the template for rendering,
+probably by a theme that does no JS, or a partial one rather than a full AJAX
+gallery.
+
+=cut
+
+
 sub gallery : Chained('load_gallery') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
 
@@ -49,13 +58,7 @@ sub gallery : Chained('load_gallery') PathPart('') Args(0) {
     my $start       = $c->req->params->{start};
     my $end         = $c->req->params->{end};
 
-    my $images = [];
-    if ( hascontent($keyword) ) {
-        $images = $gallery->images_by_keyword($keyword, $start, $end);
-    }
-    else {
-        $images = $gallery->images;     # TODO: Page this?
-    }
+    my $images = $self->_get_images( $c, $keyword, $start, $end );
 
     my @images = map { $self->_image_to_hash( $c, $_ ) } @$images;
 
@@ -68,21 +71,78 @@ sub gallery : Chained('load_gallery') PathPart('') Args(0) {
                                 : 'images.tt';
 }
 
-sub images_json : Chained('load_gallery') PathPart('images_json') Args(2) {
-    my ( $self, $c, $start, $end ) = @_;
+
+=head2 ajaxgallery
+
+Loads the framework of a gallery.  This is meant for AJAX themes that are going to
+request the images separately and don't need to load them yet.
+
+=cut
+
+sub ajaxgallery : Chained('load_gallery') PathPart('ajax') Args(0) {
+    my ( $self, $c ) = @_;
 
     my $gallery = $c->stash->{gallery};
+    
+    $c->stash->{template}    =    $gallery->format eq 'galleries' ? 'galleries.tt'
+                                : $gallery->format eq 'images'    ? 'images.tt'
+                                : 'images.tt';
+}
 
-    my @images = map { $self->_image_to_hash( $c, $_ ) } @{ $gallery->images_by_index( $start, $end ) };
+sub gallery_json : Chained('load_gallery') PathPart('gallery_json') Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{json}->{gallery} = $self->_gallery_to_hash( $c, $self->stash->{gallery} );
+    $c->stash->{current_view} = 'JSON';
+}
+
+sub images_json : Chained('load_gallery') PathPart('images_json') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $keyword     = $c->req->params->{keyword};
+    my $start       = $c->req->params->{start};
+    my $end         = $c->req->params->{end};
+
+    my $images = $self->_get_images( $c, $keyword, $start, $end );
+    my @images = map { $self->_image_to_hash( $c, $_ ) } @$images;
 
     $c->stash->{json}->{images} = \@images;
     $c->stash->{current_view} = 'JSON';
 }
 
-sub image {
-    my ( $self, $c, $gallery_id, $image_id ) = @_;
+sub galleries_json : Chained('load_gallery') PathPart('galleries_json') Args(0) {
+    my ( $self, $c ) = @_;
+    
+    my $galleries   = $c->stash->{gm}->galleries( $c->stash->{gallery}->galleries );    # TODO: Page this?
+    my @galleries   = map { $self->_gallery_to_hash( $c, $_ ) } @$galleries;
+
+    $c->stash->{json}->{galleries} = \@galleries;
+    $c->stash->{current_view} = 'JSON';
+}
+
+=head2 imagedata
+
+Sends an image binary.  This is useful for stores that cannot otherwise return a URL which
+may be useful for storing images in a database, for instance.
+
+=cut
+
+sub imagedata : Chained('load_gallery') PathPart('image/data') Args(1) {
+    my ( $self, $c, $image_id ) = @_;
 
     # TODO: Return image data directly if a URI is not available.
+}
+
+sub _get_images {
+    my ( $self, $c, $keyword, $start, $end ) = @_;
+
+    my $gallery = $c->stash->{gallery};
+    
+    my $images =   hascontent($keyword)   ? $gallery->images_by_keyword($keyword, $start, $end)
+                 : hascontent($start)     ? $gallery->images_by_index($start, $end)
+                 : $gallery->images;
+
+    return $images;
 }
 
 sub _image_to_hash {
@@ -98,6 +158,20 @@ sub _image_to_hash {
         height      => $image->height,
     };
 }
+
+sub _gallery_to_hash {
+    my ( $self, $c, $gallery ) = @_;
+    return {
+        id          => $gallery->id,
+        title       => $gallery->title,
+        description => $gallery->description,
+        image_count => $gallery->image_count,
+        # keywords    => $gallery->keywords,
+        # width       => $gallery->width,
+        # height      => $gallery->height,
+    };
+}
+
 
 =head1 AUTHOR
 
