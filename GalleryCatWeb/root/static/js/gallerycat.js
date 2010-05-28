@@ -1,7 +1,8 @@
 var GalCat = function() {
     var private = {
         current_image: 0,
-        current_page: 0
+        current_page: 0,
+        text_focus: false,
     };
     
     var public = {
@@ -305,16 +306,42 @@ var GalCat = function() {
         },
         
         keyDown: function(e) {
-              if (e.keyCode === 37) {
-                  public.prevImage();
-              }
-              else if (e.keyCode === 39) {
-                  public.nextImage();
-              }
-        }
+            if ( private.text_focus ) {
+                return true;
+            }
+            if (e.keyCode === 37) {
+                public.prevImage();
+            }
+            else if (e.keyCode === 39) {
+                public.nextImage();
+            }
+        },
+        
+        textFocusIn: function() {
+            private.text_focus = true;
+        },
+        textFocusOut: function() {
+            private.text_focus = false;
+        },
 
         
     };
     
     return public;
 }();
+
+$(document).ready( function() {
+    $('#gallery #navigation .navigation-block a').bind('click', GalCat.thumbnailClick);
+    $('#gallery #previous-image a').bind('click', GalCat.prevImageClick);
+    $('#gallery #next-image a').bind('click', GalCat.nextImageClick);
+    $('#gallery #first-page a').bind('click', GalCat.firstPageClick);
+    $('#gallery #previous-page a').bind('click', GalCat.prevPageClick);
+    $('#gallery #next-page a').bind('click', GalCat.nextPageClick);
+    $('#gallery #last-page a').bind('click', GalCat.lastPageClick);
+    $(document).bind('keydown', GalCat.keyDown);  
+    $('#gallery #keyword-search').bind('focusin', GalCat.textFocusIn).bind('focusout', GalCat.textFocusOut);
+
+    GalCat.updateImageNavigationControls();
+    GalCat.updatePageNavigationControls();
+    GalCat.preload( GalCat.current_image + 1 );
+});

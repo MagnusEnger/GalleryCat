@@ -65,21 +65,6 @@ GalCat.thumbnails_per_page = [% gallery.thumbnails_per_page %];
 GalCat.images = [% images_json %];
 GalCat.max_height = parseInt([% gallery_height %]);
 
-$(document).ready( function() {
-    $('#gallery #navigation .navigation-block a').bind('click', GalCat.thumbnailClick);
-    $('#gallery #previous-image a').bind('click', GalCat.prevImageClick);
-    $('#gallery #next-image a').bind('click', GalCat.nextImageClick);
-    $('#gallery #first-page a').bind('click', GalCat.firstPageClick);
-    $('#gallery #previous-page a').bind('click', GalCat.prevPageClick);
-    $('#gallery #next-page a').bind('click', GalCat.nextPageClick);
-    $('#gallery #last-page a').bind('click', GalCat.lastPageClick);
-    $(document).bind('keydown', GalCat.keyDown);  
-
-    GalCat.updateImageNavigationControls();
-    GalCat.updatePageNavigationControls();
-    GalCat.preload( GalCat.current_image + 1 );
-});
-
 $('#keyword-search').autocomplete({
     source: '[% c.uri_for( c.controller.action_for('gallery_keywords_json'), [gallery.id] ) %]',
     select: function(event, ui) {
