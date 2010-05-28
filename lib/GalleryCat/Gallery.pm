@@ -5,7 +5,8 @@ use Moose::Util::TypeConstraints;
 use Carp;
 
 use GalleryCat::Image;
-use Catalyst::Utils;
+
+use String::Util qw(hascontent);
 
 has 'id' => (
     is       => 'ro',
@@ -45,6 +46,11 @@ has 'format' => (
     is => 'rw',
     isa => enum([ qw( galleries images ) ]),
     default => 'images',
+);
+
+has 'theme' => (
+    is => 'rw',
+    isa => 'Str',
 );
 
 has 'hidden' => (
@@ -195,6 +201,20 @@ sub image_count {
     return shift->images_store->image_count();
 }
 
+
+# Takes the gallery's theme name and cleans it up so it's suitable for a path. I'm sure
+# there's a better way to do this, but since it should just be gallery owners setting
+# themes this is probably safe/flexible enough.
+
+sub themepath {
+    my $self = shift;
+    my $theme = $self->theme;
+    return undef if !hascontent($theme);
+    
+    $theme =~ tr/A-Za-z0-9_-//cd;
+    
+    return $theme;
+}
 
 no Moose;
 

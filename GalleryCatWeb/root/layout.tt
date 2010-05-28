@@ -1,8 +1,10 @@
+[%- PROCESS macros.tt -%]
 <html>
 <head>
  <title>GalleryCat[% IF gallery.name %]- [% gallery.name %][% END %]</title>
- <link rel="stylesheet" type="text/css" href="[% c.uri_for_static('css/gallerycat.css') %]" />
+ [% css_themed('css/gallerycat.css') %]
 </head>
 <body>
 [% content %]
 </body>
+

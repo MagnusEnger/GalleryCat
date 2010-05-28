@@ -36,7 +36,15 @@ sub index : Chained('base') PathPart('') Args(0) {
 sub load_gallery : Chained('base') PathPart('') CaptureArgs(1) {
     my ( $self, $c, $gallery_id ) = @_;
 
-    $c->stash->{gallery} = $c->stash->{gm}->gallery($gallery_id);
+    my $gallery = $c->stash->{gallery} = $c->stash->{gm}->gallery($gallery_id);
+    
+    # If the gallery has a theme set, add it to the path
+    
+    my $themepath = $gallery->themepath;
+    if ( hascontent($themepath) ) {
+        push @{ $c->stash->{additional_template_paths} }, $themepath;
+        push @{ $c->stash->{static_theme_paths} }, $themepath;
+    }
 }
 
 =head2 ajaxgallery
@@ -84,9 +92,9 @@ sub ajaxgallery : Chained('load_gallery') PathPart('ajax') Args(0) {
 
     my $gallery = $c->stash->{gallery};
     
-    $c->stash->{template}    =    $gallery->format eq 'galleries' ? 'galleries.tt'
-                                : $gallery->format eq 'images'    ? 'images.tt'
-                                : 'images.tt';
+    $c->stash->{template}    =    $gallery->format eq 'galleries' ? 'ajaxgalleries.tt'
+                                : $gallery->format eq 'images'    ? 'ajaximages.tt'
+                                : 'ajaximages.tt';
 }
 
 sub gallery_json : Chained('load_gallery') PathPart('gallery_json') Args(0) {

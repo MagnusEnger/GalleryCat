@@ -40,6 +40,21 @@ sub uri_for_static {
     return defined($params) ? $c->uri_for( '/static/' . $path, $params ) : $c->uri_for( '/static/' . $path );
 }
 
+sub uris_for_themed_static {
+    my ( $c, $path, $params ) = @_;
+    $path =~ s{^/}{};
+    
+    my @paths;
+    foreach my $themepath ( @{ $c->stash->{static_theme_paths} || [] } ) {
+        my $checkpath = $c->path_to( 'root', 'static', 'themes', $themepath, $path );
+        next if !-e $checkpath;
+        unshift( @paths, $c->uri_for_static( "themes/$themepath/$path", $params ) );
+    }
+    unshift( @paths, $c->uri_for_static( $path, $params ) );
+    
+    return \@paths;
+}
+
 sub redirect {
     my ( $c, $uri ) = @_;
 

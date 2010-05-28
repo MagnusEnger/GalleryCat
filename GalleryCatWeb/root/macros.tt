@@ -1,0 +1,11 @@
+[%- MACRO css_themed(uri) BLOCK %]
+[% FOREACH themeduri IN c.uris_for_themed_static(uri) %]
+<link rel="stylesheet" type="text/css" href="[% themeduri %]" />
+[% END -%]
+[%- END -%]
+
+[%- MACRO js_themed(uri) BLOCK %]
+[% FOREACH themeduri IN c.uris_for_themed_static(uri) %]
+<script type="text/javascript" src="[% themeduri %]"></script>
+[% END -%]
+[%- END -%]
