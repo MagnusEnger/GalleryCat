@@ -172,7 +172,7 @@ var GalCat = function() {
                         .attr('imgid', image_index)
                         .bind('click', GalCat.thumbnailClick)
                         .appendTo(block);
-                
+
                     var img = $('<img />')
                         .attr('src', image.thumbnail)
                         .appendTo(link);

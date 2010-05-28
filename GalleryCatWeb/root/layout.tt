@@ -3,6 +3,7 @@
 <head>
  <title>GalleryCat[% IF gallery.name %]- [% gallery.name %][% END %]</title>
  [% css_themed('css/gallerycat.css') %]
+ [% css_themed('css/jquery-ui.css') %]
 </head>
 <body>
 [% content %]

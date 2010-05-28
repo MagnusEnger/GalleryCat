@@ -71,6 +71,15 @@ body {
     margin-bottom: 5px;
 }
 
+#gallery #gallery-keyword-search {
+    text-align: right;
+}
+
+#gallery #keyword-search {
+    border: 1px solid #999;
+    width: 200px;
+}
+
 #gallery #gallery-name {
     width: 45%;
     float: left;

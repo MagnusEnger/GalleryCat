@@ -128,6 +128,14 @@ sub galleries_json : Chained('load_gallery') PathPart('galleries_json') Args(0) 
     $c->stash->{current_view} = 'JSON';
 }
 
+sub gallery_keywords_json : Chained('load_gallery') PathPart('keywords_json') Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $keyword = $c->req->params->{term};
+    $c->stash->{json} = $c->{stash}->{gallery}->keywords($keyword);
+    $c->stash->{current_view} = 'JSON';
+}
+
 =head2 imagedata
 
 Sends an image binary.  This is useful for stores that cannot otherwise return a URL which
