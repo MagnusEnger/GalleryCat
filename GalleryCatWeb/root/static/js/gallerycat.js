@@ -6,7 +6,6 @@ var GalCat = function() {
     };
     
     var public = {
-        max_height: 400, 
         fade_speed: 500,
         slide_speed: 500,
         images: [],
@@ -14,12 +13,18 @@ var GalCat = function() {
         thumbnails_per_page: 5,
         thumbnail_width: 100,
         thumbnail_height: 100,
+        image_height: 400,
+        image_width: 400,
 
         //
         //
         //
 
-        activateImage: function( image_index ) {
+        activateCurrentImage: function() {
+            this.activateImage( private.current_image, true );
+        },
+
+        activateImage: function( image_index, force ) {
 
             image_index = parseInt(image_index);  // Fixes odd issue where image_index is sometimes treated as a string
 
@@ -30,7 +35,7 @@ var GalCat = function() {
             if ( image_index > public.images.length-1 ) {
                 image_index = public.images.length-1;
             }
-            if ( image_index == private.current_image ) {
+            if ( image_index == private.current_image && !force ) {
                 return false;
             }
             
@@ -43,12 +48,14 @@ var GalCat = function() {
             var image_div = $('#gallery #image');
             var image_container = $('#gallery #image-container');
 
+            // TODO: Fix up the resize detection to handle over-width and over-height
+
             // Calculate the image height by clamping it at the container height
             var image = public.images[image_index];
-            var height = image.height > image_div.innerHeight() ? image_div.innerHeight() : image.height;
+            var height = image.height > public.image_height ? public.image_height : image.height;
 
             // If the image is going to be resized, we need to recalculate its width to center it
-            var resize_prc = private.max_height / image.height;
+            var resize_prc = public.image_height / image.height;
             var width = resize_prc < 1 ? ( image.width * resize_prc ) : image.width;
 
             // Append new picture and fade it in
@@ -56,10 +63,10 @@ var GalCat = function() {
                 .attr('src', image.url)
                 .css({
                     position: 'absolute',
-                    top: 0,
+                    top: (public.image_height - height) / 2,
                     height: height,
                     opacity: 0.0,
-                    left: (image_container.innerWidth() - width) / 2
+                    left: (public.image_width - width) / 2
                 })
                 .appendTo('#gallery #image-container')
                 .animate({opacity: 1.0}, private.fade_speed, 'linear');
@@ -341,7 +348,6 @@ $(document).ready( function() {
     $(document).bind('keydown', GalCat.keyDown);  
     $('#gallery #keyword-search').bind('focusin', GalCat.textFocusIn).bind('focusout', GalCat.textFocusOut);
 
-    GalCat.updateImageNavigationControls();
-    GalCat.updatePageNavigationControls();
-    GalCat.preload( GalCat.current_image + 1 );
+    GalCat.activateCurrentImage();
+    // GalCat.updatePageNavigationControls();
 });
