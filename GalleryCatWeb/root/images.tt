@@ -37,17 +37,10 @@
   </div>
   <div id="next-image" class="gallery-height"><a href="#"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uris_for_themed_static('images/icons/next.png').first %]" alt="next image" /></a></div>
  </div>
- <div id="navigation" class="ui-corner-all"><div id="navigation-container">
-  <div id="first-page" class="button"><a href="#" style="display: none;"><img class="button" src="[% c.uris_for_themed_static('images/icons/first.png').first %]" alt="first page" /></a></div>
+ <div id="navigation"><div id="navigation-container">
   <div id="previous-page"class="button"><a href="#" style="display: none;"><img class="button" src="[% c.uris_for_themed_static('images/icons/previous.png').first %]" alt="previous page" /></a></div>
-  <div id="navigation-blocks"><div class="page active">
-  [%- SET max_nav = gallery.thumbnails_per_page - 1 -%]
-  [% FOREACH x IN [ 0 .. max_nav ] %]
-   <div class="navigation-block">[% IF images.$x.defined %]<a imgid="[% x %]" href="[% images.$x.url %]" class="[% loop.first ? 'active' : '' %]"><img src="[% images.$x.thumbnail %]" /></a>[% END %]</div>
-  [% END %]
-  </div></div>
+  <div id="navigation-blocks"><div class="page active"></div></div>
   <div id="next-page" class="button"><a href="#"><img class="button" src="[% c.uris_for_themed_static('images/icons/next.png').first %]" alt="next page" /></a></div>
-  <div id="last-page" class="button"><a href="#"><img class="button" src="[% c.uris_for_themed_static('images/icons/last.png').first %]" alt="last page" /></a></div>
  </div></div>
  </div><div style="clear: both;">
 </div>
@@ -63,9 +56,13 @@
 
 GalCat.max_page = [% Math.int((images.size - 1) / gallery.thumbnails_per_page) %];
 GalCat.thumbnails_per_page = [% gallery.thumbnails_per_page %];
-GalCat.images = [% images_json %];
+GalCat.thumbnail_width = [% gallery.thumbnail_width %];
+GalCat.thumbnail_height = [% gallery.thumbnail_height %];
 GalCat.image_height = parseInt([% gallery_height %]);
 GalCat.image_width  = parseInt([% gallery.gallery_image_width %]);
+
+GalCat.images = [% images_json %];
+
 
 $('#keyword-search').autocomplete({
     source: '[% c.uri_for( c.controller.action_for('gallery_keywords_json'), [gallery.id] ) %]',

@@ -43,18 +43,6 @@ has 'thumbnail_dir' => (
     default  => 'thumbnails',
 );
 
-has 'read_exif' => (
-    is => 'ro',
-    required => 1,
-    default => 1,
-);
-
-has 'resizer_module' => (
-    is      => 'ro',
-    isa     => 'Str',
-    default => 'Resize',
-);
-
 sub BUILD {
     my $self = shift;
 

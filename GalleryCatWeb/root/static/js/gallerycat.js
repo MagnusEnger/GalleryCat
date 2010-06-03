@@ -20,6 +20,10 @@ var GalCat = function() {
         //
         //
 
+        activateCurrentPage: function() {
+            this.activatePage( private.current_page, true );
+        },
+
         activateCurrentImage: function() {
             this.activateImage( private.current_image, true );
         },
@@ -100,22 +104,22 @@ var GalCat = function() {
 
         highlightNavigation: function() {
             // Remove any current highlighting
-            $('#gallery #navigation .navigation-block a').removeClass('active');
-            
+            $('#gallery #navigation .navigation-block a.active').removeClass('active').parent().removeClass('active');
+
             // If the current image is on the current page, then find the 
             // block for that image and set it to active
-            
-            $('#gallery #navigation .navigation-block a[imgid=' + private.current_image + ']').addClass('active');
+
+            $('#gallery #navigation .navigation-block a[imgid=' + private.current_image + ']').addClass('active').parent().addClass('active');
         },
-        
+
         pageToCurrent: function() {
             return this.activatePage( parseInt(private.current_image / public.thumbnails_per_page) );
         },
-        
+
         currentImageOnPage: function() {
             return this.imageOnPage(private.current_image, private.current_page);
         },
-        
+
         imageOnPage: function( image_index, page ) {
             return page == parseInt(image_index / public.thumbnails_per_page);
         },
@@ -134,7 +138,7 @@ var GalCat = function() {
             if ( typeof(image) == 'undefined' || image.preloaded ) {
                 return;
             }
-        
+
             jQuery('<img />')
                 .hide()
                 .attr('src', image.url)
@@ -142,14 +146,14 @@ var GalCat = function() {
                 .load(function () { image.preloaded = true; jQuery(this).remove(); })
                 .error(function () { jQuery(this).remove(); });
         },
-        
+
         // Change the navigation menu to a specific page
-        activatePage: function( new_page ) {
+        activatePage: function( new_page, force ) {
 
             // Clamp left/right
             if ( new_page < 0 ) { new_page = 0; }
             if ( new_page > public.max_page ) { new_page = public.max_page; }
-            if ( private.current_page == new_page ) { return false; }
+            if ( private.current_page == new_page && !force ) { return false; }
 
             var dir = new_page > private.current_page ? 'left' : 'right';
 
@@ -159,7 +163,7 @@ var GalCat = function() {
             // Create a new page and fill in the thumbnails
 
             var image_index = new_page * this.thumbnails_per_page;
-            
+
             var page_block = $('<div />')
                 .css({
                     opacity: 0.0
@@ -171,9 +175,12 @@ var GalCat = function() {
 
                 var image = this.images[image_index];
 
+                var block = $('<div />')
+                    .addClass('navigation-block')
+                    .width( public.thumbnail_width )
+                    .height( public.thumbnail_height );
+
                 if ( typeof(image) != 'undefined' ) {
-                    var block = $('<div />')
-                        .addClass('navigation-block');
                     
                     var link = $('<a />')
                         .attr('href', '#')
@@ -184,11 +191,11 @@ var GalCat = function() {
                     var img = $('<img />')
                         .attr('src', image.thumbnail)
                         .appendTo(link);
-                    
-                    block.appendTo(page_block);
-                
+
                     image_index++;
                 }
+
+                block.appendTo(page_block);
 
             }
             
@@ -348,6 +355,7 @@ $(document).ready( function() {
     $(document).bind('keydown', GalCat.keyDown);  
     $('#gallery #keyword-search').bind('focusin', GalCat.textFocusIn).bind('focusout', GalCat.textFocusOut);
 
+    GalCat.activateCurrentPage();
     GalCat.activateCurrentImage();
     // GalCat.updatePageNavigationControls();
 });

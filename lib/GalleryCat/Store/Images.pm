@@ -25,6 +25,19 @@ has 'thumbnail_height' => (
     required    => 1,
 );
 
+has 'read_exif' => (
+    is => 'ro',
+    required => 1,
+    default => 1,
+);
+
+has 'resizer_module' => (
+    is      => 'ro',
+    isa     => 'Str',
+    default => 'GDCenterCrop',
+);
+
+
 
 no Moose;
 
