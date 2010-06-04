@@ -99,7 +99,7 @@ has 'gallery_image_width' => (
 has 'gallery_info_width' => (
     is      => 'ro',
     isa     => 'Str',
-    default => 200,
+    default => 400,
 );
 
 

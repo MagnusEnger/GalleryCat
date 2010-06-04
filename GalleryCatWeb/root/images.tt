@@ -12,6 +12,11 @@
     height: [% gallery_height %]px;
 }
 
+.image-info-height {
+/*    height: 97%;*/
+    height: [% gallery_height - 10 %]px;
+}
+
 #gallery #image {
     width: [% gallery.gallery_image_width || 500 %]px;
 }
@@ -31,20 +36,21 @@
   <div id="main" class="gallery-height">    
    <div id="previous-image" class="gallery-height"><a href="#" style="display: none;"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uri_for_static('images/icons/previous.png') %]" alt="previous image" /></a></div>
    <div id="image" class="gallery-height"><div id="image-container"></div></div>
-   <div id="image-info" class="gallery-height">
+   <div id="next-image" class="gallery-height"><a href="#"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uris_for_themed_static('images/icons/next.png').first %]" alt="next image" /></a></div>
+   <div id="image-info" class="image-info-height">
     <div id="image-title"></div>
     <div id="image-description"></div>
     <div id="image-keywords"></div>
    </div>
-   <div id="next-image" class="gallery-height"><a href="#"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uris_for_themed_static('images/icons/next.png').first %]" alt="next image" /></a></div>
   </div>
   <div id="navigation"><div id="navigation-container">
    <div id="previous-page"class="button"><a href="#" style="display: none;"><img class="button" src="[% c.uris_for_themed_static('images/icons/previous.png').first %]" alt="previous page" /></a></div>
    <div id="navigation-blocks"><div class="page active"></div></div>
    <div id="next-page" class="button"><a href="#"><img class="button" src="[% c.uris_for_themed_static('images/icons/next.png').first %]" alt="next page" /></a></div>
   </div></div>
-  </div><div style="clear: both;">
+  <div style="clear: both;"></div>
  </div></div>
+ <div style="clear: both;"></div>
 </div>
 
 <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> -->
