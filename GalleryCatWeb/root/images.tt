@@ -1,11 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 [%- PROCESS macros.tt -%]
 [%- USE Math -%]
-[%- SET gallery_height = gallery.gallery_height %]
+[%- SET gallery_height = gallery.gallery_height -%]
+[%- SET thumbnail_height = gallery.thumbnail_height -%]
 
 <style>
 #gallery #navigation .navigation-block {
     width: [% gallery.thumbnail_width || 150 %]px;
-    height: [% gallery.thumbnail_height || 150 %]px;
+    height: [% thumbnail_height || 150 %]px;
 }
 
 .gallery-height {
@@ -17,7 +19,7 @@
 }
 
 #gallery #image-info {
-    width: [% gallery.gallery_info_width || 200 %]px;
+    width: [% gallery.gallery_info_width || gallery.gallery_image_width || 500 %]px;
 }
 </style>
 
@@ -27,23 +29,23 @@
   <div id="gallery-keyword-search" class="ui-widget"><label for="keyword-search">Search: <label><input id="keyword-search" type="text" value="[% keyword %]"/></div>
   <div style="clear: both;"></div>
  </div>
- <div id="wrapper"><div id="wrapper-container">
-  <div id="main" class="gallery-height">    
-   <div id="previous-image" class="gallery-height"><a href="#"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uri_for_static('images/icons/previous.png') %]" alt="previous image" /></a></div>
+ <div id="wrapper">
+  <div id="main">    
+   <div id="previous-image"><a href="#"><img class="button" style="margin-top: [% gallery_height / 2 %]" src="[% c.uri_for_static('images/icons/previous2.png') %]" alt="previous image" /></a></div>
    <div id="image" class="gallery-height"><div id="image-container"></div></div>
-   <div id="next-image" class="gallery-height"><a href="#"><img class="button" style="margin-top: [% ( gallery_height - 48 ) / 2 %]" src="[% c.uris_for_themed_static('images/icons/next.png').first %]" alt="next image" /></a></div>
-  </div>
+   <div id="next-image"><a href="#"><img class="button" style="margin-top: [% gallery_height / 2 %]" src="[% c.uris_for_themed_static('images/icons/next2.png').first %]" alt="next image" /></a></div>
+  </div><br />
   <div id="image-info">
    <div id="image-title"></div>
    <div id="image-description"></div>
    <!-- <div id="image-keywords"></div> -->
-  </div>
-  <div id="navigation"><div id="navigation-container">
-   <div id="previous-page"class="button"><a href="#" style="display: none;"><img class="button" src="[% c.uris_for_themed_static('images/icons/previous.png').first %]" alt="previous page" /></a></div>
+  </div><br />
+  <div id="navigation">
+   <div id="previous-page"class="button"><a href="#"><img class="button" style="margin-top: [% thumbnail_height / 2 %]" src="[% c.uris_for_themed_static('images/icons/previous2.png').first %]" alt="previous page" /></a></div>
    <div id="navigation-blocks"><div class="page active"></div></div>
-   <div id="next-page" class="button"><a href="#"><img class="button" src="[% c.uris_for_themed_static('images/icons/next.png').first %]" alt="next page" /></a></div>
-  </div></div>
- </div></div>
+   <div id="next-page" class="button"><a href="#"><img class="button" style="margin-top: [% thumbnail_height / 2 %]" src="[% c.uris_for_themed_static('images/icons/next2.png').first %]" alt="next page" /></a></div>
+  </div>
+ </div>
 </div>
 
 <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> -->
@@ -61,17 +63,19 @@ GalCat.thumbnail_width = [% gallery.thumbnail_width %];
 GalCat.thumbnail_height = [% gallery.thumbnail_height %];
 GalCat.image_height = parseInt([% gallery_height %]);
 GalCat.image_width  = parseInt([% gallery.gallery_image_width %]);
+GalCat.spacer_image = '[% c.uri_for_static('images/spacer.gif') %]';
 
 GalCat.images = [% images_json %];
 
 
-$('#keyword-search').autocomplete({
-    source: '[% c.uri_for( c.controller.action_for('gallery_keywords_json'), [gallery.id] ) %]',
-    select: function(event, ui) {
-        var uri = '[% c.req.uri_with({ keyword => 'xxx' }) %]';
-        uri = uri.replace( 'xxx', ui.item.value );
-        window.location = uri;
-    }
-});
+// $('#keyword-search').autocomplete({
+//     source: '[% c.uri_for( c.controller.action_for('gallery_keywords_json'), [gallery.id] ) %]',
+//     select: function(event, ui) {
+//         var uri = '[% c.req.uri_with({ keyword => 'xxx' }) %]';
+//         uri = uri.replace( 'xxx', ui.item.value );
+//         window.location = uri;
+//     }
+// });
     
 </script>
+

@@ -2,9 +2,9 @@ var GalCat = function() {
     var private = {
         current_image: 0,
         current_page: 0,
-        text_focus: false,
+        text_focus: false
     };
-    
+
     var public = {
         fade_speed: 500,
         slide_speed: 500,
@@ -15,6 +15,7 @@ var GalCat = function() {
         thumbnail_height: 100,
         image_height: 400,
         image_width: 400,
+        spacer_image: '',
 
         //
         //
@@ -42,7 +43,7 @@ var GalCat = function() {
             if ( image_index == private.current_image && !force ) {
                 return false;
             }
-            
+
             // Start deleting the previous picture while we get the next ready
             $('#gallery #image img').animate({opacity: 0.0}, private.fade_speed, 'linear', function() {
                 jQuery(this).remove();
@@ -88,7 +89,7 @@ var GalCat = function() {
 
             // Show and hide relevant controls
             this.updateImageNavigationControls();
-            
+
             // Change the page if necessary
             this.pageToCurrent();
 
@@ -106,7 +107,7 @@ var GalCat = function() {
             // Remove any current highlighting
             $('#gallery #navigation .navigation-block a.active').removeClass('active').parent().removeClass('active');
 
-            // If the current image is on the current page, then find the 
+            // If the current image is on the current page, then find the
             // block for that image and set it to active
 
             $('#gallery #navigation .navigation-block a[imgid=' + private.current_image + ']').addClass('active').parent().addClass('active');
@@ -180,34 +181,30 @@ var GalCat = function() {
                     .width( public.thumbnail_width )
                     .height( public.thumbnail_height );
 
-                if ( typeof(image) != 'undefined' ) {
-                    
-                    var link = $('<a />')
-                        .attr('href', '#')
-                        .attr('imgid', image_index)
-                        .bind('click', GalCat.thumbnailClick)
-                        .appendTo(block);
 
-                    var img = $('<img />')
-                        .attr('src', image.thumbnail)
-                        .appendTo(link);
+                var have_image = typeof(image) != 'undefined';
 
-                    image_index++;
-                }
+                var link = $('<a />')
+                    .attr('href', '#')
+                    .attr('imgid', ( have_image ? image_index : -1 ) )
+                    .bind('click', GalCat.thumbnailClick)
+                    .appendTo(block);
+
+                var img = $('<img />')
+                    .attr('src', ( have_image ? image.thumbnail : public.spacer_image ) )
+                    .appendTo(link);
+
+                image_index++;
 
                 block.appendTo(page_block);
 
             }
-            
-            if ( dir == 'left' ) {
-                page_block.appendTo('#navigation-blocks');
-            }
-            else {
-                page_block.prependTo('#navigation-blocks');
-            }
-            
+
+
+            page_block.appendTo('#navigation-blocks');
+
             // Clear the existing navigation
-            
+
             old_page_block
                 .find('a').attr('imgid', -1);
 
@@ -219,9 +216,9 @@ var GalCat = function() {
                 });
 
             page_block.animate({opacity: 1.0}, private.fade_speed, 'linear');
-            
+
             // New page is active
-            
+
             private.current_page = new_page;
 
             // Hide controls at left/right bounds
@@ -229,7 +226,7 @@ var GalCat = function() {
 
             return this;
         },
-        
+
         updateImageNavigationControls: function() {
             if ( private.current_image <= 0 ) {
                 $('#gallery #previous-image a').addClass('inactive');
@@ -245,27 +242,23 @@ var GalCat = function() {
                 $('#gallery #next-image a').removeClass('inactive');
             }
         },
-        
+
         updatePageNavigationControls: function() {
             if ( private.current_page == 0 ) {
-                $('#gallery #navigation #first-page a').hide();
-                $('#gallery #navigation #previous-page a').hide();
+                $('#gallery #navigation #previous-page a').addClass('inactive');
             }
             else {
-                $('#gallery #navigation #first-page a').show();
-                $('#gallery #navigation #previous-page a').show();
+                $('#gallery #navigation #previous-page a').removeClass('inactive');
             }
 
             if ( private.current_page == public.max_page ) {
-                $('#gallery #navigation #next-page a').hide();
-                $('#gallery #navigation #last-page a').hide();
+                $('#gallery #navigation #next-page a').addClass('inactive');
             }
             else {
-                $('#gallery #navigation #next-page a').show();
-                $('#gallery #navigation #last-page a').show();
+                $('#gallery #navigation #next-page a').removeClass('inactive');
             }
         },
-        
+
         prevImage: function() {
             public.activateImage( private.current_image - 1 );
         },
@@ -278,12 +271,12 @@ var GalCat = function() {
         nextPage: function() {
             public.activatePage( private.current_page + 1 );
         },
-    
+
 
         //
         // JQUERY BINDING FUNCTIONS
-        // 
-        
+        //
+
         // jQuery event, clicked on a thumbnail
         thumbnailClick: function(e) {
             var image_index = $(this).attr('imgid');
@@ -318,7 +311,7 @@ var GalCat = function() {
             public.activatePage(public.max_page);
             return false;
         },
-        
+
         keyDown: function(e) {
             if ( private.text_focus ) {
                 return true;
@@ -330,17 +323,16 @@ var GalCat = function() {
                 public.nextImage();
             }
         },
-        
+
         textFocusIn: function() {
             private.text_focus = true;
         },
         textFocusOut: function() {
             private.text_focus = false;
-        },
+        }
 
-        
     };
-    
+
     return public;
 }();
 
@@ -352,7 +344,7 @@ $(document).ready( function() {
     $('#gallery #previous-page a').bind('click', GalCat.prevPageClick);
     $('#gallery #next-page a').bind('click', GalCat.nextPageClick);
     $('#gallery #last-page a').bind('click', GalCat.lastPageClick);
-    $(document).bind('keydown', GalCat.keyDown);  
+    $(document).bind('keydown', GalCat.keyDown);
     $('#gallery #keyword-search').bind('focusin', GalCat.textFocusIn).bind('focusout', GalCat.textFocusOut);
 
     GalCat.activateCurrentPage();

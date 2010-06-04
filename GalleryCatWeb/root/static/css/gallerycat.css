@@ -95,15 +95,12 @@ body {
 #gallery #wrapper {
     text-align: center;
     display: inline-block;
+    zoom: 1;
+    *display: inline;
     margin-top: 15px;
     margin-left: auto;
     margin-right: auto;
-
-/*    border: 1px solid #555;
-    -moz-border-radius: 15px;
-    -webkit-border-radius: 15px;
-    background: #111;
-*/}
+}
 
 #gallery #image-title {
     font-weight: bold;
@@ -128,9 +125,12 @@ body {
 #gallery #image-info {
     text-align: left;
     height: 4em;
-
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
     background: #222;
     border: 1px solid #555;
+    clear: both;
 }
 
 #gallery #image img {
@@ -139,15 +139,22 @@ body {
 
 
 #gallery #image {
-/*    float: left;*/
     overflow: hidden;
     border: 1px solid #444;
     background: black;
     display: inline-block;
+    zoom: 1;
+    *display: inline;
 }
 
 #gallery #image-container {
     position: relative;
+}
+
+#gallery #main {
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
 }
 
 #gallery #main .inactive {
@@ -155,31 +162,36 @@ body {
 }
 
 #gallery #main #previous-image {
-    width: 45px;
     margin: 0;
     display: inline-block;
+    zoom: 1;
+    *display: inline;
     vertical-align: top;
 }
 
+#gallery #main a {
+}
+
 #gallery #main #next-image {
-    width: 48px;
     margin: 0;
     display: inline-block;
+    zoom: 1;
+    *display: inline;
     vertical-align: top;
 }
 
 #gallery #navigation {
     display: inline-block;
-    clear: both;
+    zoom: 1;
+    *display: inline;
     margin: 20px 0 0 0;
 }
 
-
 #gallery #navigation .navigation-block {
-/*    float: left;*/
     margin: 8px;
-    border: 2px solid #111;
-    
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
 }
 
 #gallery #navigation .navigation-block a img {
@@ -191,22 +203,23 @@ body {
 }
 
 #gallery #navigation .navigation-block.active {
-    border: 2px solid #999;
 }
 
 
 #gallery #navigation-blocks {
-/*    float: left;*/
     overflow: hidden;
     white-space: nowrap;
-    border: 1px solid #333;
     padding: 5px;
-    -moz-border-radius: 15px;
-    -webkit-border-radius: 15px;
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
 }
 
+
 #gallery #navigation-blocks .page {
-    float: left;
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
 }
 
 #gallery #navigation-blocks .page.fading {
@@ -214,18 +227,24 @@ body {
 }
 
 #gallery #navigation-container {
-    float: left;
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
 }
 
 #gallery #navigation div.button {
-    float: left;
-    margin: 10px;
-    width: 48px;
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
+    vertical-align: top;
 }
 
-
-#gallery .navigation-block img {
-    display: block;
-    margin: auto auto;
+#gallery #navigation a {
 }
 
+#gallery #navigation div.button a.inactive img {
+    opacity: 0.3;
+}
+
+br { margin: 0; width: 0; height: 0; padding: 0; line-height: 0; }
+ 
