@@ -2,8 +2,8 @@ body {
     margin: 0;
     padding: 0;
     background: black;
-    font-family: Verdana, Arial, sans-serif;
-    font-size: 90%;
+    font-family: "Trebuchet MS", Trebuchet, Helvetica, Arial, sans-serif;
+    font-size: 80%;
 }
 
 #gallery {
@@ -98,7 +98,6 @@ body {
     margin-top: 15px;
     margin-left: auto;
     margin-right: auto;
-    padding: 10px;
 
 /*    border: 1px solid #555;
     -moz-border-radius: 15px;
@@ -128,17 +127,11 @@ body {
 
 #gallery #image-info {
     text-align: left;
-    margin-top: 5px;
-    float: left;
-    padding-left: 10px;
-    margin-right: 20px;
+    height: 4em;
 
-/*    background: #222;
-    -moz-border-radius: 15px;
-    -webkit-border-radius: 15px;
+    background: #222;
     border: 1px solid #555;
-    border-left: none;
-*/}
+}
 
 #gallery #image img {
     display: block;
@@ -146,31 +139,33 @@ body {
 
 
 #gallery #image {
-    float: left;
-    margin-left: 30px;
+/*    float: left;*/
     overflow: hidden;
-/*    border: 1px solid #aaa;*/
+    border: 1px solid #444;
     background: black;
+    display: inline-block;
 }
 
 #gallery #image-container {
     position: relative;
 }
 
+#gallery #main .inactive {
+    opacity: 0.3;
+}
 
 #gallery #main #previous-image {
-    padding-left: 20px;
-    float: left;
     width: 45px;
     margin: 0;
+    display: inline-block;
+    vertical-align: top;
 }
 
 #gallery #main #next-image {
-    padding-right: 20px;
-    float: left;
     width: 48px;
     margin: 0;
-    
+    display: inline-block;
+    vertical-align: top;
 }
 
 #gallery #navigation {
@@ -181,7 +176,7 @@ body {
 
 
 #gallery #navigation .navigation-block {
-    float: left;
+/*    float: left;*/
     margin: 8px;
     border: 2px solid #111;
     
@@ -201,7 +196,7 @@ body {
 
 
 #gallery #navigation-blocks {
-    float: left;
+/*    float: left;*/
     overflow: hidden;
     white-space: nowrap;
     border: 1px solid #333;

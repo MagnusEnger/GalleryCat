@@ -232,17 +232,17 @@ var GalCat = function() {
         
         updateImageNavigationControls: function() {
             if ( private.current_image <= 0 ) {
-                $('#gallery #previous-image a').hide();
+                $('#gallery #previous-image a').addClass('inactive');
             }
             else {
-                $('#gallery #previous-image a').show();
+                $('#gallery #previous-image a').removeClass('inactive');
             }
 
             if ( private.current_image >= (public.images.length-1) ) {
-                $('#gallery #next-image a').hide();
+                $('#gallery #next-image a').addClass('inactive');
             }
             else {
-                $('#gallery #next-image a').show();
+                $('#gallery #next-image a').removeClass('inactive');
             }
         },
         
