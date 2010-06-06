@@ -2,7 +2,8 @@ var GalCat = function() {
     var private = {
         current_image: 0,
         current_page: 0,
-        text_focus: false
+        text_focus: false,
+        info: true
     };
 
     var public = {
@@ -15,7 +16,9 @@ var GalCat = function() {
         thumbnail_height: 100,
         image_height: 400,
         image_width: 400,
+        info_height: 50,
         spacer_image: '',
+        
 
         //
         //
@@ -311,6 +314,25 @@ var GalCat = function() {
             public.activatePage(public.max_page);
             return false;
         },
+        infoClick: function(e) {
+            $('#gallery #image-info').animate(
+                { height:  private.info ? '1.3em' : (public.info_height + 'px') },
+                150,
+                'linear'
+            );
+            
+            if ( private.info ) {
+                $('#gallery #image-info img#showinfo-down').hide();
+                $('#gallery #image-info img#showinfo-up').show();
+            }
+            else {
+                $('#gallery #image-info img#showinfo-down').show();
+                $('#gallery #image-info img#showinfo-up').hide();
+            }
+            
+            private.info = !private.info;
+            return false;
+        },
 
         keyDown: function(e) {
             if ( private.text_focus ) {
@@ -344,6 +366,7 @@ $(document).ready( function() {
     $('#gallery #previous-page a').bind('click', GalCat.prevPageClick);
     $('#gallery #next-page a').bind('click', GalCat.nextPageClick);
     $('#gallery #last-page a').bind('click', GalCat.lastPageClick);
+    $('#gallery #image-description-button a').bind('click', GalCat.infoClick );
     $(document).bind('keydown', GalCat.keyDown);
     $('#gallery #keyword-search').bind('focusin', GalCat.textFocusIn).bind('focusout', GalCat.textFocusOut);
 

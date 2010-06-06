@@ -1,25 +1,44 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 [%- PROCESS macros.tt -%]
 [%- USE Math -%]
-[%- SET gallery_height = gallery.gallery_height -%]
-[%- SET thumbnail_height = gallery.thumbnail_height -%]
+[%- SET gallery_width  = gallery.gallery_image_width || 500 -%]
+[%- SET gallery_height = gallery.gallery_height || 500 -%]
+[%- SET thumbnail_width  = gallery.thumbnail_width || 100 -%]
+[%- SET thumbnail_height = gallery.thumbnail_height || 100 -%]
 
 <style>
-#gallery #navigation .navigation-block {
-    width: [% gallery.thumbnail_width || 150 %]px;
-    height: [% thumbnail_height || 150 %]px;
-}
-
 .gallery-height {
     height: [% gallery_height %]px;
 }
 
+.gallery-height2 {
+    height: [% gallery_height + 2 %]px;
+}
+
+#gallery #main {
+    width: [% gallery_width + 66 %]px;
+}
+
 #gallery #image {
-    width: [% gallery.gallery_image_width || 500 %]px;
+    width: [% gallery_width %]px;
 }
 
 #gallery #image-info {
-    width: [% gallery.gallery_info_width || gallery.gallery_image_width || 500 %]px;
+    width: [% (gallery.gallery_info_width || gallery_width) - 6 %]px;
+}
+
+#gallery #navigation {
+    width: [% ( (gallery.thumbnail_width + 10) * gallery.thumbnails_per_page) + 66 %]px;
+    height: [% thumbnail_height + 10 %]px;
+}
+
+#gallery #navigation-blocks {
+    width: [% ( (gallery.thumbnail_width + 10) * gallery.thumbnails_per_page) %]px;
+}
+
+#gallery #navigation .navigation-block {
+    width: [% thumbnail_width  %]px;
+    height: [% thumbnail_height %]px;
 }
 </style>
 
@@ -30,16 +49,17 @@
   <div style="clear: both;"></div>
  </div>
  <div id="wrapper">
-  <div id="main">    
-   <div id="previous-image"><a href="#"><img class="button" style="margin-top: [% gallery_height / 2 %]" src="[% c.uri_for_static('images/icons/previous2.png') %]" alt="previous image" /></a></div>
+  <div id="main" class="gallery-height2">    
+   <div id="previous-image" class="button"><a href="#"><img style="margin-top: [% gallery_height / 2 %]" src="[% c.uris_for_themed_static('images/icons/previous2.png').first %]" alt="previous image" /></a></div>
    <div id="image" class="gallery-height"><div id="image-container"></div></div>
-   <div id="next-image"><a href="#"><img class="button" style="margin-top: [% gallery_height / 2 %]" src="[% c.uris_for_themed_static('images/icons/next2.png').first %]" alt="next image" /></a></div>
-  </div><br />
+   <div id="next-image" class="button"><a href="#"><img style="margin-top: [% gallery_height / 2 %]" src="[% c.uris_for_themed_static('images/icons/next2.png').first %]" alt="next image" /></a></div>
+  </div>
   <div id="image-info">
+   <div id="image-description-button" class="button"><a href="#"><img id="showinfo-down" style="display: block;" src="[% c.uris_for_themed_static('images/icons/arrow_down.png').first %]" /><img id="showinfo-up" style="display:none" src="[% c.uris_for_themed_static('images/icons/arrow_up.png').first %]" /></a></div>
    <div id="image-title"></div>
    <div id="image-description"></div>
    <!-- <div id="image-keywords"></div> -->
-  </div><br />
+  </div>
   <div id="navigation">
    <div id="previous-page"class="button"><a href="#"><img class="button" style="margin-top: [% thumbnail_height / 2 %]" src="[% c.uris_for_themed_static('images/icons/previous2.png').first %]" alt="previous page" /></a></div>
    <div id="navigation-blocks"><div class="page active"></div></div>
@@ -63,6 +83,7 @@ GalCat.thumbnail_width = [% gallery.thumbnail_width %];
 GalCat.thumbnail_height = [% gallery.thumbnail_height %];
 GalCat.image_height = parseInt([% gallery_height %]);
 GalCat.image_width  = parseInt([% gallery.gallery_image_width %]);
+GalCat.info_height  = parseInt([% gallery.gallery_info_height %]);
 GalCat.spacer_image = '[% c.uri_for_static('images/spacer.gif') %]';
 
 GalCat.images = [% images_json %];

@@ -98,8 +98,14 @@ has 'gallery_image_width' => (
 
 has 'gallery_info_width' => (
     is      => 'ro',
-    isa     => 'Str',
+    isa     => 'Int',
     default => 400,
+);
+
+has 'gallery_info_height' => (
+    is      => 'ro',
+    isa     => 'Int',
+    default => 75,
 );
 
 
