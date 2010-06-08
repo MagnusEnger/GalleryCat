@@ -23,8 +23,16 @@
     width: [% gallery_width %]px;
 }
 
+#gallery #image .button {
+    margin-top: [% gallery_height / 5 %]px;
+}
+
 #gallery #image-info {
     width: [% (gallery.gallery_info_width || gallery_width) - 6 %]px;
+}
+
+#gallery #image-description {
+    height: [% gallery.gallery_info_height %]px;
 }
 
 #gallery #navigation {
@@ -34,11 +42,16 @@
 
 #gallery #navigation-blocks {
     width: [% ( (gallery.thumbnail_width + 10) * gallery.thumbnails_per_page) %]px;
+    height: [% thumbnail_height + 10 %]px;
 }
 
 #gallery #navigation .navigation-block {
     width: [% thumbnail_width  %]px;
     height: [% thumbnail_height %]px;
+}
+
+#gallery #navigation .button {
+    margin-top: [% thumbnail_height / 5 %]px;
 }
 </style>
 
@@ -55,9 +68,9 @@
    <div id="next-image" class="button"><a href="#"><img style="margin-top: [% gallery_height / 2 %]" src="[% c.uris_for_themed_static('images/icons/next2.png').first %]" alt="next image" /></a></div>
   </div>
   <div id="image-info">
-   <div id="image-description-button" class="button"><a href="#"><img id="showinfo-down" style="display: block;" src="[% c.uris_for_themed_static('images/icons/arrow_down.png').first %]" /><img id="showinfo-up" style="display:none" src="[% c.uris_for_themed_static('images/icons/arrow_up.png').first %]" /></a></div>
+   <div id="image-description-button" class="button"><a href="#"><img id="showinfo-down" style="display: block;" src="[% c.uris_for_themed_static('images/icons/arrow_down.png').first %]" /><img id="showinfo-up" style="display: none" src="[% c.uris_for_themed_static('images/icons/arrow_up.png').first %]" /></a></div>
    <div id="image-title"></div>
-   <div id="image-description"></div>
+   <div id="image-description" style="display: none;"></div>
    <!-- <div id="image-keywords"></div> -->
   </div>
   <div id="navigation">
@@ -88,15 +101,15 @@ GalCat.spacer_image = '[% c.uri_for_static('images/spacer.gif') %]';
 
 GalCat.images = [% images_json %];
 
-
-// $('#keyword-search').autocomplete({
-//     source: '[% c.uri_for( c.controller.action_for('gallery_keywords_json'), [gallery.id] ) %]',
-//     select: function(event, ui) {
-//         var uri = '[% c.req.uri_with({ keyword => 'xxx' }) %]';
-//         uri = uri.replace( 'xxx', ui.item.value );
-//         window.location = uri;
-//     }
-// });
-    
+$(document).ready( function() {
+    $('#keyword-search').autocomplete({
+        source: '[% c.uri_for( c.controller.action_for('gallery_keywords_json'), [gallery.id] ) %]',
+        select: function(event, ui) {
+            var uri = '[% c.req.uri_with({ keyword => 'xxx' }) %]';
+            uri = uri.replace( 'xxx', ui.item.value );
+            window.location = uri;
+        }
+    });
+});    
 </script>
 

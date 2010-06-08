@@ -3,7 +3,7 @@ var GalCat = function() {
         current_image: 0,
         current_page: 0,
         text_focus: false,
-        info: true
+        info: false
     };
 
     var public = {
@@ -18,7 +18,7 @@ var GalCat = function() {
         image_width: 400,
         info_height: 50,
         spacer_image: '',
-        
+
 
         //
         //
@@ -162,7 +162,19 @@ var GalCat = function() {
             var dir = new_page > private.current_page ? 'left' : 'right';
 
 
+            // Find the existing page block and start hiding it
+
             var old_page_block = $('#gallery #navigation-blocks div.page.active');
+
+            old_page_block
+                .removeClass('active')
+                .addClass('fading')
+                .animate({opacity: 0.0}, private.fade_speed, 'linear', function() {
+                    jQuery(this).remove();
+                });
+
+            // old_page_block
+            //     .find('a').attr('imgid', -1);
 
             // Create a new page and fill in the thumbnails
 
@@ -200,24 +212,10 @@ var GalCat = function() {
                 image_index++;
 
                 block.appendTo(page_block);
-
+                
             }
 
-
             page_block.appendTo('#navigation-blocks');
-
-            // Clear the existing navigation
-
-            old_page_block
-                .find('a').attr('imgid', -1);
-
-            old_page_block
-                .removeClass('active')
-                .addClass('fading')
-                .animate({opacity: 0.0}, private.fade_speed, 'linear', function() {
-                    jQuery(this).remove();
-                });
-
             page_block.animate({opacity: 1.0}, private.fade_speed, 'linear');
 
             // New page is active
@@ -254,7 +252,7 @@ var GalCat = function() {
                 $('#gallery #navigation #previous-page a').removeClass('inactive');
             }
 
-            if ( private.current_page == public.max_page ) {
+            if ( private.current_page >= public.max_page ) {
                 $('#gallery #navigation #next-page a').addClass('inactive');
             }
             else {
@@ -315,21 +313,20 @@ var GalCat = function() {
             return false;
         },
         infoClick: function(e) {
-            $('#gallery #image-info').animate(
-                { height:  private.info ? '1.3em' : (public.info_height + 'px') },
-                150,
-                'linear'
+            $('#gallery #image-description').slideToggle(
+                'fast',
+                function() { public.updatePageNavigationControls() }
             );
-            
+
             if ( private.info ) {
-                $('#gallery #image-info img#showinfo-down').hide();
-                $('#gallery #image-info img#showinfo-up').show();
-            }
-            else {
                 $('#gallery #image-info img#showinfo-down').show();
                 $('#gallery #image-info img#showinfo-up').hide();
             }
-            
+            else {
+                $('#gallery #image-info img#showinfo-down').hide();
+                $('#gallery #image-info img#showinfo-up').show();
+            }
+
             private.info = !private.info;
             return false;
         },

@@ -105,7 +105,7 @@ has 'gallery_info_width' => (
 has 'gallery_info_height' => (
     is      => 'ro',
     isa     => 'Int',
-    default => 75,
+    default => 50,
 );
 
 

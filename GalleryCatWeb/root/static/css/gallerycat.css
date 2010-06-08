@@ -97,8 +97,8 @@ body {
 }
 
 #gallery #main .button {
+    margin-top: 45%;
     float: left;
-    display: inline;
 }
 
 #gallery #main .inactive {
@@ -148,20 +148,21 @@ body {
 
 #gallery #navigation {
     margin: 0 auto;
+    position: relative;
 }
 
 #gallery #navigation .button {
     float: left;
-    display: inline;
-    
 }
 
 #gallery #navigation-blocks {
     float: left;
     width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
-#gallery #navigation-blocks .page.fading {
+#gallery #navigation-blocks .page {
     position: absolute;
 }
 
