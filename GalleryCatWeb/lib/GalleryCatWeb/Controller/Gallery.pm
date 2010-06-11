@@ -66,13 +66,16 @@ sub gallery : Chained('load_gallery') PathPart('') Args(0) {
     my $start       = $c->req->params->{start};
     my $end         = $c->req->params->{end};
 
+    $start = defined($start) ? int($start) : undef;
+    $end   = defined($end) ? int($end) : undef;
+
     my $images = $self->_get_images( $c, $keyword, $start, $end );
 
     my @images = map { $self->_image_to_hash( $c, $_ ) } @$images;
 
     $c->stash->{keyword}     = $c->req->params->{keyword};  # TODO: untaint this
-    $c->stash->{start}       = int($c->req->params->{start});
-    $c->stash->{end}         = int($c->req->params->{end});
+    $c->stash->{start}       = $start;
+    $c->stash->{end}         = $end;
 
     $c->stash->{images}      = \@images;
     $c->stash->{images_json} = JSON::XS->new->utf8->encode( \@images );
