@@ -42,7 +42,7 @@ sub load_gallery : Chained('base') PathPart('') CaptureArgs(1) {
     
     my $themepath = $gallery->themepath;
     if ( hascontent($themepath) ) {
-        push @{ $c->stash->{additional_template_paths} }, $themepath;
+        push @{ $c->stash->{additional_template_paths} }, ($c->config->{root} . '/themes/' . $themepath);
         push @{ $c->stash->{static_theme_paths} }, $themepath;
     }
 }
@@ -139,7 +139,7 @@ sub gallery_keywords_json : Chained('load_gallery') PathPart('keywords_json') Ar
     my ( $self, $c ) = @_;
 
     my $keyword = $c->req->params->{term};
-    $c->stash->{json} = $c->{stash}->{gallery}->keywords($keyword);
+    $c->stash->{json} = $c->{stash}->{gallery}->useful_keywords($keyword);
     $c->stash->{current_view} = 'JSON';
 }
 

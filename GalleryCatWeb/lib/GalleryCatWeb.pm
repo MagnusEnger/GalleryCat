@@ -50,7 +50,7 @@ sub uris_for_themed_static {
         next if !-e $checkpath;
         unshift( @paths, $c->uri_for_static( "themes/$themepath/$path", $params ) );
     }
-    unshift( @paths, $c->uri_for_static( $path, $params ) );
+    push( @paths, $c->uri_for_static( $path, $params ) );
     
     return \@paths;
 }

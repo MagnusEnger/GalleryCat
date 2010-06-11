@@ -227,6 +227,21 @@ sub keywords {
 }
 
 
+# Same as keywords, but it removes any keywords that would return all images.
+sub useful_keywords {
+    my ( $self, $limit ) = @_;
+
+    my $keywords = $self->_keywords;
+    my @keywords = keys %$keywords;
+    my $count = $self->image_count;
+    @keywords = grep { scalar(@{$keywords->{$_}}) < $count } @keywords;
+    if ( hascontent($limit) ) {
+        return [ grep { /$limit/ } @keywords ];
+    }
+    return \@keywords;
+}
+
+
 no Moose;
 
 =head1 NAME
