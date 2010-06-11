@@ -42,7 +42,7 @@ sub load_gallery : Chained('base') PathPart('') CaptureArgs(1) {
     
     my $themepath = $gallery->themepath;
     if ( hascontent($themepath) ) {
-        push @{ $c->stash->{additional_template_paths} }, $themepath;
+        push @{ $c->stash->{additional_template_paths} }, ($c->config->{root} . '/themes/' . $themepath);
         push @{ $c->stash->{static_theme_paths} }, $themepath;
     }
 }
