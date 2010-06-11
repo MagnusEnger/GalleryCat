@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 23;
+use Test::More tests => 24;
 
 use Cwd;
 use lib 't/lib';
@@ -77,4 +77,5 @@ is( scalar(@$keyword_list), 4, 'got all gallery keywords' );
 $keyword_list = $exif_store->keywords('keyword');
 is( scalar(@$keyword_list), 2, 'got gallery keyword subset' );
 
-
+$keyword_list = $exif_store->useful_keywords();
+is( scalar(@$keyword_list), 3, 'got useful gallery keywords' );
