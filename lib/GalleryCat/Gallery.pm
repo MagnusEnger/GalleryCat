@@ -143,7 +143,7 @@ has 'images_store_config' => (
 has 'images_store' => (
     is          => 'rw',
     isa         => 'Object',
-    handles     => [ qw( images_count max_image_width max_image_height keywords ) ],
+    handles     => [ qw( images_count max_image_width max_image_height keywords useful_keywords ) ],
 
 );
 
