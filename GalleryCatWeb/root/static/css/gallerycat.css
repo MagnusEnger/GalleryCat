@@ -81,6 +81,19 @@ body {
     width: 200px;
 }
 
+#gallery #clear-search {  
+    color: black;
+    position: relative;
+    left: -1.8em;
+    z-index: 99;
+    top: -2px;
+}  
+
+#gallery #clear-search img {
+    border: none;
+    vertical-align: top;
+}
+
 #gallery #gallery-name {
     width: 45%;
     float: left;
@@ -191,3 +204,4 @@ body {
 #gallery #navigation .inactive {
     opacity: 0.3;
 }
+

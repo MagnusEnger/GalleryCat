@@ -364,9 +364,10 @@ $(document).ready( function() {
     $('#gallery #next-page a').bind('click', GalCat.nextPageClick);
     $('#gallery #last-page a').bind('click', GalCat.lastPageClick);
     $('#gallery #image-description-button a').bind('click', GalCat.infoClick );
-    $(document).bind('keydown', GalCat.keyDown);
     $('#gallery #keyword-search').bind('focusin', GalCat.textFocusIn).bind('focusout', GalCat.textFocusOut);
 
+    $(document).bind('keydown', GalCat.keyDown);
+    
     GalCat.activateCurrentPage();
     GalCat.activateCurrentImage();
     // GalCat.updatePageNavigationControls();

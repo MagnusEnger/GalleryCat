@@ -58,7 +58,7 @@
 <div id="gallery">
  <div id="info">
   <div id="gallery-name">[% gallery.name | html %]</div>
-  <div id="gallery-keyword-search" class="ui-widget"><label for="keyword-search">Search: <label><input id="keyword-search" type="text" value="[% keyword %]"/></div>
+  <div id="gallery-keyword-search" class="ui-widget"><label for="keyword-search">Search: <label><input id="keyword-search" type="text" value="[% keyword %]"/><a href="#" id="clear-search"><img src="[% c.uris_for_themed_static('images/icons/delete.png').first %]" /></a></div>
   <div style="clear: both;"></div>
  </div>
  <div id="wrapper">
@@ -110,6 +110,7 @@ $(document).ready( function() {
             window.location = uri;
         }
     });
+   $('#clear-search').bind('click', function() { window.location = '[% c.req.uri_with({ keyword => undef }) %]'; return false; } );
 });    
 </script>
 
