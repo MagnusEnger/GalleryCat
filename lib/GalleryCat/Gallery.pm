@@ -53,6 +53,11 @@ has 'theme' => (
     isa => 'Str',
 );
 
+has 'mobile_theme'  => (
+    is => 'rw',
+    isa => 'Str',
+);
+
 has 'hidden' => (
     is => 'ro',
     isa => 'Bool',

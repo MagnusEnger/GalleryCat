@@ -28,6 +28,18 @@ GalleryCatWeb::Controller::Root - Root Controller for GalleryCatWeb
 
 =cut
 
+sub base : Chained('/') PathPart('') CaptureArgs(0) {
+    my ( $self, $c ) = @_;
+    
+    # Set a "mobile" flag if we detect a mobile device
+    
+    my $browser = $c->request->browser;
+    if ( $browser->iphone || $browser->ipod ) {
+        $c->stash->{mobile} = 1;
+    }
+}
+
+
 sub index : Path : Args(0) {
     my ( $self, $c ) = @_;
     $c->redirect( $c->uri_for( $c->controller('Gallery')->action_for('index') ) );

@@ -1,9 +1,7 @@
 package GalleryCatWeb;
 
-use strict;
-use warnings;
-
-use Catalyst::Runtime 5.80;
+use Moose;
+use namespace::autoclean;
 
 # Set flags and add plugins for the application
 #
@@ -13,10 +11,13 @@ use Catalyst::Runtime 5.80;
 # Static::Simple: will serve static files from the application's root
 #                 directory
 
-use parent qw/Catalyst/;
 use Catalyst qw/-Debug
                 ConfigLoader
                 Static::Simple/;
+use CatalystX::RoleApplicator;
+
+extends 'Catalyst';
+
 our $VERSION = '0.01';
 
 # Configure the application.
@@ -29,6 +30,20 @@ our $VERSION = '0.01';
 # local deployment.
 
 __PACKAGE__->config( name => 'GalleryCatWeb' );
+
+after 'setup_finalize' => sub {
+    my $app = shift;
+    my $themes = $app->config->{load_themes};
+    warn($themes);
+    $themes = ref($themes) eq 'ARRAY' ? $themes : [ $themes ];
+    foreach my $theme ( @$themes ) {
+        Catalyst::Utils::ensure_class_loaded( 'GalleryCatWeb::Themes::' . $theme );
+    }
+};
+
+__PACKAGE__->apply_request_class_roles(qw/
+    Catalyst::TraitFor::Request::BrowserDetect
+/);
 
 # Start the application
 __PACKAGE__->setup();
@@ -79,6 +94,18 @@ sub uri_for_image {
     else {
         return 'ERROR';
     }
+}
+
+sub theme_call {
+    my ( $c, $method, @rest ) = @_;
+    
+    if ( my $theme = $c->stash->{gallery}->theme ) {
+        my $module = 'GalleryCatWeb::Themes::' . $theme;
+        if ( $module->can($method) ) {
+            $module->$method( $c, @rest );
+        }
+    }
+    
 }
 
 =head1 NAME

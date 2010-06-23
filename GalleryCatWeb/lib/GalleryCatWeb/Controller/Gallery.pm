@@ -18,7 +18,7 @@ Catalyst Controller.
 
 =cut
 
-sub base : Chained('/') PathPart('gallery') CaptureArgs(0) {
+sub base : Chained('/base') PathPart('gallery') CaptureArgs(0) {
     my ( $self, $c ) = @_;
     $c->stash->{gm} = $c->model('GalleryCat');
 }
@@ -29,7 +29,6 @@ sub base : Chained('/') PathPart('gallery') CaptureArgs(0) {
 
 sub index : Chained('base') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
-    warn( $c->stash->{gm}->main_gallery );
     $c->go( 'gallery', [ $c->stash->{gm}->main_gallery ], [] );
 }
 
@@ -37,6 +36,12 @@ sub load_gallery : Chained('base') PathPart('') CaptureArgs(1) {
     my ( $self, $c, $gallery_id ) = @_;
 
     my $gallery = $c->stash->{gallery} = $c->stash->{gm}->gallery($gallery_id);
+    
+    # Check if we're being accessed from a mobile device and possibly switch the theme
+    
+    if ( $c->stash->{mobile} && $gallery->mobile_theme ) {
+        $gallery->theme( $gallery->mobile_theme );
+    }
     
     # If the gallery has a theme set, add it to the path
     
@@ -54,7 +59,6 @@ probably by a theme that does no JS, or a partial one rather than a full AJAX
 gallery.
 
 =cut
-
 
 sub gallery : Chained('load_gallery') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
@@ -84,6 +88,8 @@ sub gallery : Chained('load_gallery') PathPart('') Args(0) {
     $c->stash->{template}    =    $gallery->format eq 'galleries' ? 'galleries.tt'
                                 : $gallery->format eq 'images'    ? 'images.tt'
                                 : 'images.tt';
+                                
+    $c->theme_call( 'gallery_before_display' );
 }
 
 
